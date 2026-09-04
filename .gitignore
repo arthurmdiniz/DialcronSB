@@ -1,69 +1,55 @@
-# Prerequisites
-*.d
+# Build outputs
+[Dd]ialcronSB/[Bb]in/
+[Dd]ialcronSB/[Oo]bj/
+[Pp]ublish/*
+![Pp]ublish/[Dd]ialcronSBDB.db
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# .NET / MAUI
+*.nupkg
+*.snupkg
+project.nuget.cache
+*.nuget.dgspec.json
+*.props.user
 
-# Precompiled Headers
-*.gch
-*.pch
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
 
-# Linker files
-*.ilk
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 
-# Debugger Files
-*.pdb
+# Rider
+.idea/
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-*.so.*
+# SQLite database files (versioned on purpose for cross-PC sync)
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+!publish/*.db
 
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
 
-# Fortran module files
-*.mod
-*.smod
+# macOS
+.DS_Store
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
+# Office temp files
+~$*
 
-# Executables
-*.exe
-*.out
-*.app
+# Android build
+*.apk
+*.aab
 
-# Build directories
-build/
-Build/
-build-*/
-
-# CMake generated files
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
-Makefile
-install_manifest.txt
-compile_commands.json
-
-# Temporary files
-*.tmp
-*.log
-*.bak
-*.swp
-
-# vcpkg
-vcpkg_installed/
-
-# debug information files
-*.dwo
-
-# test output & cache
-Testing/
-.cache/
+# NuGet
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/

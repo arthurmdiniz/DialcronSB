@@ -1,0 +1,338 @@
+# AGENTS.md - Guia para Assistentes de Codigo
+
+## Projeto
+
+**Dialcron** - App de agendamento para salao de beleza, multiplataforma (Windows + Android). Mapeado a partir do banco Dialcron3 (MySQL).
+
+## Stack Tecnologica
+
+| Componente       | Tecnologia                        |
+|------------------|-----------------------------------|
+| Framework        | .NET MAUI                         |
+| Arquitetura      | Code-behind + DAO (2 camadas)     |
+| ORM              | sqlite-net-pcl                    |
+| Calendario       | Plugin.Maui.Calendar              |
+| Linguagem        | C#                                |
+
+## Padroes e Convencoes
+
+### Arquitetura
+
+- **2 camadas**: Models + DAO (dados) e Views/Pages (interface)
+- Pages XAML chamam os DAOs diretamente no code-behind (sem ViewModel)
+- **DAO Pattern** para acesso a banco de dados (cada entidade tem seu DAO)
+- **Injecao de dependencia** via `MauiProgram.cs`
+
+### Nomenclatura
+
+- Models: substantivos no singular (`Cliente`, `Servico`, `Profissional`, `Atendimento`)
+- DAOs: `{NomeModel}DAO` (`ClienteDAO`, `ServicoDAO`, etc.)
+- Views: `{NomeFeature}Page.xaml` (XAML + code-behind `{NomeFeature}Page.xaml.cs`)
+- Metodos CRUD: `GetAllAsync`, `GetByIdAsync`, `InsertAsync`, `UpdateAsync`, `DeleteAsync`
+- Propriedades: PascalCase
+- Variaveis locais: camelCase
+- Privados: `_camelCase` com underscore
+
+### Nomenclatura de Tabelas (SQLite)
+
+- **`cad_*`** = Tabelas GLOBAIS (clientes, unidades, usuarios, atendimentos, etc.)
+- **`bel_*`** = Tabelas do segmento SALAO DE BELEZA
+- Colunas: manter padrao MySQL (`dta_agendamento`, `dta_criacao`, `ativo`, etc.)
+
+### Codigo
+
+- Usar `async/await` para todas as operacoes com banco de dados
+- Chamar os DAOs direto no code-behind das Pages (sem ViewModel)
+- Manter logica de negocios simples, concentrada nos DAOs
+- Comentarios APENAS quando solicitado pelo usuario
+- Nao adicionar emojis nos arquivos
+
+## Estrutura de Arquivos
+
+```
+.github/
+└── workflows/
+    └── build.yml                 # CI/CD: compila Windows + Android
+.gitignore                        # Ignora build outputs; versiona o banco em publish/
+Documentacao/                     # Artefatos de requisitos e documentacao
+├── Dialcron30SL.docx             # Documento de Especificacao de Software
+├── Dialcron30SL.pptx             # Apresentacao (pitch)
+├── DialcronSB.sql            # Script de criacao do banco (SQLite)
+├── DialcronMySQL.sql             # Banco original Dialcron3 (MySQL)
+└── TemplateUNA.pptx              # Template da apresentacao
+publish/                          # Publicacao standalone (Windows)
+└── DialcronSBDB.db           # Banco "fonte" versionado (sincronizado entre PCs)
+DialcronSB/
+├── publish.ps1                   # Script de publicacao standalone
+├── Diagrama/
+│   ├── SalaoDiagrama.drawio      # Diagrama de classes (editavel)
+│   └── SalaoDiagrama.drawio.png  # Diagrama de classes (exportado)
+├── Models/
+│   ├── Matriz.cs                 # Modelo de matriz
+│   ├── Unidade.cs                # Modelo de unidade
+│   ├── Cliente.cs                # Modelo de cliente
+│   ├── Usuario.cs                # Modelo de usuario
+│   ├── Servico.cs                # Modelo de servico
+│   ├── Profissional.cs           # Modelo de profissional
+│   ├── Atendimento.cs            # Modelo de atendimento (global)
+│   ├── BelAtendimento.cs         # Modelo de atendimento (salao)
+│   ├── AtendimentoServico.cs     # Modelo pivoi N:N
+│   └── TipoAtendimento.cs        # Tipo de atendimento (salao)
+├── Data/
+│   ├── Database.cs               # Singleton + caminhos platform-specific
+│   └── DAO/
+│       ├── MatrizDAO.cs          # CRUD de matrizes
+│       ├── UnidadeDAO.cs         # CRUD de unidades
+│       ├── ClienteDAO.cs         # CRUD de clientes
+│       ├── UsuarioDAO.cs         # CRUD de usuarios
+│       ├── ServicoDAO.cs         # CRUD de servicos
+│       ├── ProfissionalDAO.cs    # CRUD de profissionais
+│       ├── AtendimentoDAO.cs     # CRUD de atendimentos (global)
+│       ├── BelAtendimentoDAO.cs  # CRUD de atendimentos (salao)
+│       ├── AtendimentoServicoDAO.cs # CRUD pivoi N:N
+│       ├── TipoAtendimentoDAO.cs # CRUD tipos de atendimento (salao)
+│       └── RelatorioDAO.cs      # Queries (previsto para 2a fase: relatorios financeiros)
+├── Views/                        # Pages XAML + code-behind (a implementar)
+├── MainPage.xaml                 # Tela de Backup/Restore
+├── App.xaml.cs                   # Validacao de banco na inicializacao
+├── AppShell.xaml                 # Shell de navegacao
+└── MauiProgram.cs               # Configuracao DI + startup
+```
+
+## Inicializacao do Banco de Dados
+
+### Caminhos por Plataforma
+
+- **Windows**: `AppDomain.CurrentDomain.BaseDirectory` (ao lado do .exe)
+- **Android**: `FilesDir/DialcronAgendamentos/DialcronSBDB.db`
+
+### Fluxo de Inicializacao (MainPage.OnAppearing)
+
+```
+MainPage aparece
+  -> Database.DatabaseExists()?
+    -> SIM: Database.InitializeAsync() -> AtualizarInfoBanco()
+    -> NAO: Database.CreateDatabaseAsync() -> MostrarStatus("Banco criado")
+```
+
+### Metodos Database.cs
+
+- `DbPath` (propriedade estatica) - caminho do banco por plataforma
+- `DatabaseExists()` - verifica se o arquivo existe
+- `CreateDatabaseAsync()` - cria diretorio + banco + 12 tabelas
+- `InitializeAsync()` - abre conexao + cria tabelas se nao existirem
+
+### Banco Versionado (sincronizacao entre PCs)
+
+- O `publish/DialcronSBDB.db` e versionado no git e funciona como "banco fonte" (nao ha banco na raiz)
+- Apos cada `dotnet publish`, o banco permanece em `publish/DialcronSBDB.db` (ao lado do `.exe`); o target `CopySeedDatabase` apenas remove o `.pdb` de debug
+- O `.gitignore` permite versionar `publish/*.db`, ignorando os demais `*.db`
+- Fluxo entre varios PCs: rodar o app -> o banco e criado/atualizado em `publish/` -> commitar o `publish/DialcronSBDB.db` atualizado -> atualizar nos demais PCs
+- Cuidado: por ser binario, editar o banco em varios PCs ao mesmo tempo gera conflito de merge (sincronizar um PC por vez)
+
+## Publicacao Standalone
+
+### Configuracao (.csproj)
+
+- `SelfContained=true` no .csproj (runtime embutido)
+- `PublishTrimmed=false` (sem trimming para MAUI)
+- `WindowsPackageType=None` (app desempacotado)
+- `PublishSingleFile=true` (Windows) - empacota runtime + app em um unico `.exe`
+- `IncludeNativeLibrariesForSelfExtract=true` + `IncludeAllContentForSelfExtract=true` (extraem dlls nativas/UWP em runtime)
+- Resultado: a pasta `publish/` fica com apenas **2 arquivos**: `DialcronSB.exe` (~250 MB) e `DialcronSBDB.db`
+
+### Alvo MSBuild `CopySeedDatabase` (apos Publish)
+
+- O banco ja reside em `publish/` (versionado); o target nao copia banco da raiz
+- Remove o `DialcronSB.pdb` (symbols de debug) da saida de publicacao
+- So roda no Windows (nao interfere no build Android/CI)
+
+### Comandos
+
+```bash
+# Publicar (gera a pasta publish/ na RAIZ do repo, com exe + banco)
+dotnet publish -f net10.0-windows10.0.19041.0 -c Release -o publish
+
+# Ou usar o script
+.\publish.ps1
+```
+
+> Nota: publique SEM `-r win-x64` explicito. O MAUI Windows usa o runtime CoreCLR por padrao; forcar `-r win-x64` tenta baixar o runtime Mono e falha (NU1102).
+
+### Limpeza de Idiomas
+
+O target MSBuild `RemoveUnwantedLocales` roda apos Build e Publish, removendo pastas de idioma exceto:
+- `pt-BR` (idioma principal)
+- `en-us` (idioma fallback)
+- `Platforms`, `Microsoft.UI.Xaml`, `NpuDetect` (pastas de sistema)
+
+## CI/CD - GitHub Actions
+
+Workflow: `.github/workflows/build.yml` - build automatico em push para `main`, pull request e `workflow_dispatch`.
+
+### Ambiente
+
+- Runner: `windows-latest` (compila Windows e Android no mesmo job)
+- .NET SDK `10.0.x` via `actions/setup-dotnet`
+- JDK 21 via `actions/setup-java` (distribuicao Microsoft) - requisito do target Android no .NET 10 (API 36)
+- `dotnet workload install maui --ignore-failed-sources`
+- Android SDK via `android-actions/setup-android@v3` + `sdkmanager` (platforms/build-tools 35 e 36)
+
+### Artifacts
+
+- **Windows**: `Dialcron-Windows.zip` - pasta de publicacao standalone (`SelfContained`, sem precisa de .NET instalado)
+- **Android**: APK em `Dialcron-Android`
+  - Com secrets configuradas: `Release` assinado (`AndroidKeyStore=true`, `AndroidSigningKeyStore`, etc., `AndroidPackageFormat=apk`)
+  - Sem secrets: `Debug` APK (assinado com o debug keystore, instalavel)
+
+### Secrets para APK Release assinado
+
+| Secret                       | Descricao                              |
+|------------------------------|----------------------------------------|
+| `ANDROID_KEYSTORE_BASE64`    | Keystore `.jks` codificado em base64   |
+| `ANDROID_KEYSTORE_PASSWORD`  | Senha do keystore (store pass)         |
+| `ANDROID_KEY_ALIAS`          | Alias da chave de assinatura           |
+| `ANDROID_KEY_PASSWORD`       | Senha da chave                         |
+
+O `ApplicationVersion` e auto-incrementado com `github.run_number`.
+
+### Publicar APK Release assinado localmente
+
+```bash
+dotnet publish -f net10.0-android -c Release \
+  -p:AndroidKeyStore=true \
+  -p:AndroidSigningKeyStore=dialcron.keystore \
+  -p:AndroidSigningKeyAlias=alias \
+  -p:AndroidSigningKeyPass=senha \
+  -p:AndroidSigningStorePass=senha \
+  -p:AndroidPackageFormat=apk
+```
+
+## Dependencias NuGet
+
+```bash
+dotnet add package sqlite-net-pcl
+dotnet add package Plugin.Maui.Calendar
+```
+
+## Abrir no VS Code
+
+```bash
+cd C:\Git\DialcronSB\DialcronSB
+code .
+```
+
+## Comandos Uteis
+
+```bash
+# Restaurar pacotes
+dotnet restore
+
+# Compilar (Debug)
+dotnet build -f net10.0-windows10.0.19041.0
+
+# Rodar no Windows (Debug)
+dotnet run -f net10.0-windows10.0.19041.0
+
+# Publicar standalone (Release) - gera publish/ na raiz com exe + banco
+dotnet publish -f net10.0-windows10.0.19041.0 -c Release -o publish
+
+# Rodar no Android
+dotnet run -f net10.0-android
+
+# Gerar APK (unsigned ou Release assinado: ver secao CI/CD)
+dotnet publish -f net10.0-android -c Release
+
+# Limpar build
+dotnet clean
+```
+
+## Mapeamento MySQL (Dialcron3) -> SQLite (Dialcron)
+
+### Tabelas Globais
+
+| MySQL            | SQLite          | Descricao                      |
+|------------------|-----------------|--------------------------------|
+| cad_matriz       | cad_matriz      | Empresa dona (segmento BEL)|
+| cad_unidade      | cad_unidade     | Unidades/filiais               |
+| cad_cliente      | cad_cliente     | Clientes                       |
+| cad_usuario      | cad_usuario     | Usuarios do sistema            |
+| cad_atendimento  | cad_atendimento | Atendimentos (base global)     |
+
+### Tabelas Segmento Salao
+
+| MySQL            | SQLite              | Descricao                   |
+|------------------|---------------------|-----------------------------|
+| med_especialidade| bel_servico         | Servicos do salao           |
+| med_medico       | bel_profissional    | Profissionais do salao      |
+| med_agenda       | bel_atendimento     | Atendimentos do salao (herda de cad_atendimento) |
+| (nova)           | bel_atendimento_servico | Tabela pivoi N:N        |
+| (nova)           | bel_tipo_atendimento | Tipos de atendimento do salao |
+
+### Adaptacoes MySQL -> SQLite
+
+- Composite PK -> `INTEGER PRIMARY KEY AUTOINCREMENT`
+- `AUTO_INCREMENT` -> `AUTOINCREMENT`
+- varchar/int/datetime -> `TEXT`
+- decimal -> `REAL`
+- char(1) -> `TEXT` (mantido)
+- Constraints FK -> `PRAGMA foreign_keys = ON`
+- Indices -> `CREATE INDEX` explicito
+
+## Fluxo de Implementacao
+
+Ao implementar este projeto, seguir esta ordem:
+
+1. Criar projeto MAUI + instalar NuGets
+2. Criar Models (com atributos sqlite-net-pcl) - FEITO
+3. Criar Database.cs (singleton + caminhos platform-specific) - FEITO
+4. Criar DAOs (CRUD por entidade) - FEITO
+5. Configurar MauiProgram.cs (DI) - FEITO
+6. Configurar validacao de banco na inicializacao - FEITO
+7. Configurar publicacao standalone - FEITO
+8. Criar Views/Pages (XAML + code-behind chamando os DAOs) - A IMPLEMENTAR
+9. Testar compilacao Windows + Android
+
+## Restricoes
+
+- NAO usar Xamarin.Forms (usar apenas .NET MAUI)
+- NAO criar arquivos duplicados
+- NAO alterar a estrutura de pastas sem necessidade
+- NAO versar chaves, senhas ou dados sensiveis
+- NAO usar `Navigation.PushAsync` sem tratar erro de navegacao
+- NAO adicionar dependencias extras sem necessidade
+- Manter consistencia com o padrao DAO existente
+- Cada DAO deve receber `SQLiteAsyncConnection` via construtor
+- Manter padrao de nomenclatura `cad_*` (global) e `bel_*` (salao)
+
+## Referencia de Modelos
+
+### cad_matriz (Global)
+- IdMatriz (int, PK), Nome (string), Segmento (string), Ativo (string), DtaCriacao (string)
+
+### cad_unidade (Global)
+- IdUnidade (int, PK), Matriz (int, FK), NomeFantasia (string), RazaoSocial (string), Cnpj (string), InscEstadual (string), InscMunicipal (string), Cep (int?), Logradouro (string), Numero (int?), Bairro (string), Complemento (string), Municipio (string), Uf (string), Pais (string), Email (string), Ddd (int?), Telefone (int?), Cliente (int?, FK)
+
+### cad_cliente (Global)
+- IdCliente (int, PK), Nome (string), Logradouro (string), Numero (int?), CpfCnpj (string), DtaNascimento (string), DtaCriacao (string), DddTelefone (int?), Telefone (int?), DddCelular (int?), Celular (int?), Email (string), Sexo (string)
+
+### cad_usuario (Global)
+- Id (int, PK), Login (string), Senha (string), Nome (string), Perfil (string), Email (string), Grupo (int?), Ativo (string), DtaCriacao (string), DtaInativacao (string)
+
+### cad_atendimento (Global)
+- Id (int, PK), Unidade (int, FK), Cliente (int?, FK), Descricao (string), Situacao (string), DtaCriacao (string), DtaEncerramento (string), UsuarioCriacao (int?, FK), UsuarioEncerramento (int?, FK)
+
+### bel_servico (Segmento Salao)
+- Id (int, PK), Unidade (int, FK), Nome (string), Preco (double), DuracaoMinutos (int), Ativo (string)
+
+### bel_profissional (Segmento Salao)
+- Id (int, PK), Unidade (int, FK), Nome (string), Especialidade (string), DddTelefone (int?), Telefone (int?), DddCelular (int?), Celular (int?), DddOutros (int?), TelefoneOutros (int?), Ativo (string)
+
+### bel_atendimento (Segmento Salao)
+- Id (int, PK), Atendimento (int, FK), Profissional (int, FK), DtaAtendimento (string), DtaCriacao (string), DtaEncerramento (string), Situacao (string), Valor (double), Pago (int), Observacao (string)
+
+### bel_atendimento_servico (Pivoi N:N)
+- Id (int, PK), Atendimento (int, FK), Servico (int, FK)
+
+### bel_tipo_atendimento (Segmento Salao)
+- Id (int, PK), Unidade (int, FK), DesTipoAtendimento (string), Ativo (string)
