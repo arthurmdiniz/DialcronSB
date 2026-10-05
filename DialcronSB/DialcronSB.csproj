@@ -32,7 +32,7 @@
 		<ApplicationTitle>DialcronSB</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.dialcronsb</ApplicationId>
+		<ApplicationId>br.com.dialcron.salao</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
