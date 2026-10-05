@@ -103,30 +103,45 @@ DialcronSB/
 
 ### Caminhos por Plataforma
 
-- **Windows**: `AppDomain.CurrentDomain.BaseDirectory` (ao lado do .exe)
-- **Android**: `FilesDir/DialcronAgendamentos/DialcronSBDB.db`
+Definidos em `Database.BuildDbPath()`:
+
+- **Windows**: `AppDomain.CurrentDomain.BaseDirectory` (ao lado do .exe, sem subpasta)
+- **Android**: `FileSystem.AppDataDirectory` + `DialcronAgendamentos` (= `FilesDir/DialcronAgendamentos/DialcronSBDB.db`)
+- O `ApplicationId` e `br.com.dialcron.salao`; trocar o pacote exige desinstalar o app anterior
+
+### Banco-Padrao (seed embutido)
+
+- O arquivo `DialcronSB/Resources/Raw/DialcronSB_PADRAO.db` e o banco vazio com as 10 tabelas (schema identico ao `Documentacao/DialcronSB.sql`)
+- Por estar em `Resources/Raw/**`, ele e embutido no pacote automaticamente pelo `MauiAsset` do `.csproj`
+- No primeiro uso, `CreateDatabaseAsync()` copia o seed do pacote (`FileSystem.OpenAppPackageFileAsync`) para `DbPath`
+- No Android o `.db` fica na pasta privada do app: sem permissao, invisivel no gerenciador de arquivos e apagado ao desinstalar. Inspecao via `adb shell run-as br.com.dialcron.salao ls files/DialcronAgendamentos/`
 
 ### Fluxo de Inicializacao (MainPage.OnAppearing)
 
 ```
 MainPage aparece
-  -> Database.DatabaseExists()?
-    -> SIM: Database.InitializeAsync() -> AtualizarInfoBanco()
-    -> NAO: Database.CreateDatabaseAsync() -> MostrarStatus("Banco criado")
+  -> Database.Instance.InitializeAsync()
+    -> ja inicializado? SIM: retorna a mesma conexao
+    -> DatabaseExists()? SIM: OpenConnectionAsync()
+                     NAO: CreateDatabaseAsync() (copia o seed)
+    -> PRAGMA foreign_keys = ON
 ```
 
 ### Metodos Database.cs
 
+- `Instance` (singleton estatico) - acessado direto pelas Pages (`AppShell`/`App` sao instanciados com `new`, sem DI)
 - `DbPath` (propriedade estatica) - caminho do banco por plataforma
 - `DatabaseExists()` - verifica se o arquivo existe
-- `CreateDatabaseAsync()` - cria diretorio + banco + 12 tabelas
-- `InitializeAsync()` - abre conexao + cria tabelas se nao existirem
+- `CreateDatabaseAsync()` - cria diretorio + copia o seed do pacote
+- `OpenConnectionAsync()` - abre a conexao e ativa `PRAGMA foreign_keys = ON`
+- `InitializeAsync()` - idempotente: cria o banco se faltar e devolve a `SQLiteAsyncConnection`
 
 ### Banco Versionado (sincronizacao entre PCs)
 
 - O `publish/DialcronSBDB.db` e versionado no git e funciona como "banco fonte" (nao ha banco na raiz)
 - Apos cada `dotnet publish`, o banco permanece em `publish/DialcronSBDB.db` (ao lado do `.exe`); o target `CopySeedDatabase` apenas remove o `.pdb` de debug
-- O `.gitignore` permite versionar `publish/*.db`, ignorando os demais `*.db`
+- O `.gitignore` permite versionar `publish/*.db` e `DialcronSB/Resources/Raw/*.db` (seed), ignorando os demais `*.db`
+- A sincronizacao vale **apenas entre PCs**; no Android o banco vive no aparelho (use Backup/Restore para levar dados entre dispositivos)
 - Fluxo entre varios PCs: rodar o app -> o banco e criado/atualizado em `publish/` -> commitar o `publish/DialcronSBDB.db` atualizado -> atualizar nos demais PCs
 - Cuidado: por ser binario, editar o banco em varios PCs ao mesmo tempo gera conflito de merge (sincronizar um PC por vez)
 
