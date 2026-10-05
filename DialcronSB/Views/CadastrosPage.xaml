@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DialcronSB.Views.CadastrosPage"
+             Title="Cadastros">
+
+    <VerticalStackLayout
+        Padding="30,0"
+        Spacing="15"
+        VerticalOptions="Center">
+
+        <Label
+            Text="Cadastros"
+            Style="{StaticResource Headline}"
+            SemanticProperties.HeadingLevel="Level1" />
+
+        <Button
+            x:Name="ClientesBtn"
+            Text="Clientes"
+            Clicked="OnClientesClicked"
+            SemanticProperties.Hint="Abre o cadastro de clientes"
+            HorizontalOptions="Fill" />
+
+        <Button
+            x:Name="ServicosBtn"
+            Text="Serviços"
+            Clicked="OnServicosClicked"
+            SemanticProperties.Hint="Abre o cadastro de serviços"
+            HorizontalOptions="Fill" />
+
+        <Button
+            x:Name="ProfissionaisBtn"
+            Text="Profissionais"
+            Clicked="OnProfissionaisClicked"
+            SemanticProperties.Hint="Abre o cadastro de profissionais"
+            HorizontalOptions="Fill" />
+
+    </VerticalStackLayout>
+
+</ContentPage>
