@@ -89,11 +89,12 @@ DialcronSB/
 │       ├── ProfissionalDAO.cs    # CRUD de profissionais
 │       ├── AtendimentoDAO.cs     # CRUD de atendimentos (global)
 │       ├── BelAtendimentoDAO.cs  # CRUD de atendimentos (salao)
-│       ├── AtendimentoServicoDAO.cs # CRUD pivoi N:N
-│       ├── TipoAtendimentoDAO.cs # CRUD tipos de atendimento (salao)
-│       └── RelatorioDAO.cs      # Queries (previsto para 2a fase: relatorios financeiros)
+│   ├── AtendimentoServicoDAO.cs # CRUD pivoi N:N
+│   ├── TipoAtendimentoDAO.cs # CRUD tipos de atendimento (salao)
+│   ├── BackupDAO.cs           # Gera copia consistente do banco (VACUUM INTO)
+│   └── RelatorioDAO.cs      # Queries (previsto para 2a fase: relatorios financeiros)
 ├── Views/                        # Pages XAML + code-behind (a implementar)
-├── MainPage.xaml                 # Tela de Backup/Restore
+├── MainPage.xaml                 # Tela inicial + Backup (Salvar no Windows / Compartilhar no Android)
 ├── App.xaml.cs                   # Validacao de banco na inicializacao
 ├── AppShell.xaml                 # Shell de navegacao
 └── MauiProgram.cs               # Configuracao DI + startup
@@ -144,6 +145,15 @@ MainPage aparece
 - A sincronizacao vale **apenas entre PCs**; no Android o banco vive no aparelho (use Backup/Restore para levar dados entre dispositivos)
 - Fluxo entre varios PCs: rodar o app -> o banco e criado/atualizado em `publish/` -> commitar o `publish/DialcronSBDB.db` atualizado -> atualizar nos demais PCs
 - Cuidado: por ser binario, editar o banco em varios PCs ao mesmo tempo gera conflito de merge (sincronizar um PC por vez)
+
+## Backup do Banco
+
+- O botao "Backup" da `MainPage` gera o arquivo e o entrega conforme a plataforma
+- Nome padrao: `DialcronSB_Backup_yyyyMMddHHmm.db` (`BackupDAO.BuildBackupFileName()`, com `InvariantCulture`)
+- A copia usa `VACUUM INTO` (snapshot consistente em arquivo unico); o destino e apagado antes, pois o comando falha se o arquivo ja existir
+- **Windows**: gera o arquivo em `FileSystem.CacheDirectory` e abre o dialogo nativo "Salvar como" via `FileSaver.Default.SaveAsync` (CommunityToolkit.Maui); o temporario e removido ao concluir
+- **Android**: gera o arquivo em `FileSystem.CacheDirectory/sharing-root` (pasta compartilhada pelo FileProvider do MAUI) e abre o seletor de apps via `Share.Default.RequestAsync`
+- O `AndroidManifest.xml` nao precisa de mudanca: o FileProvider e registrado pelo proprio Essentials
 
 ## Publicacao Standalone
 
@@ -228,7 +238,10 @@ dotnet publish -f net10.0-android -c Release \
 ```bash
 dotnet add package sqlite-net-pcl
 dotnet add package Plugin.Maui.Calendar
+dotnet add package CommunityToolkit.Maui
 ```
+
+> `CommunityToolkit.Maui` esta fixado na **14.1.1**: a 15.x exige `Microsoft.Maui.Controls >= 10.0.90`, incompativel com o `MauiVersion 10.0.71` do projeto. O `UseMauiCommunityToolkit()` precisa estar no `MauiProgram.cs`.
 
 ## Abrir no VS Code
 

@@ -35,6 +35,14 @@
             SemanticProperties.Hint="Abre o menu de cadastros"
             HorizontalOptions="Fill" />
 
+        <Button
+            x:Name="BackupBtn"
+            Text="Backup"
+            FontSize="18"
+            Clicked="OnBackupClicked"
+            SemanticProperties.Hint="Gera um backup do banco de dados"
+            HorizontalOptions="Fill" />
+
     </VerticalStackLayout>
 
 </ContentPage>
