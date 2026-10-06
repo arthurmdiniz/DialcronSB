@@ -15,6 +15,7 @@ Este repositorio reune os artefatos de levantamento, analise e garantia de quali
 | `Documentacao\Diagrama\SalaoDiagrama.drawio` | Diagrama de classes e EDR (editavel em draw.io) com as entidades do dominio, atributos, metodos e cardinalidades dos relacionamentos (ex.: 1:0..N). Serve de base para a secao 3.4 do documento Word. |
 | `Documentacao\Dialcron30SL.pdf` | Entregável documentação. |
 | `Documentacao\Dialcron30SLApresentacao.pdf` | Entregável apresentação. |
+| `Documentacao\CriacaoDeTelas.md` | Guia de desenvolvimento: passo a passo para criar telas (XAML + code-behind, rotas, navegacao, acesso ao banco via DAO) e convencoes de codigo. |
 
 
 ## Funcionalidades
