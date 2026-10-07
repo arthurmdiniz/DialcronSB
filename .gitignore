@@ -34,7 +34,7 @@ project.nuget.cache
 *.db-shm
 *.db-wal
 !publish/*.db
-!Documentação/*.db
+!DialcronSB/Resources/Raw/*.db
 
 # Windows
 Thumbs.db

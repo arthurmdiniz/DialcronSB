@@ -89,11 +89,12 @@ DialcronSB/
 │       ├── ProfissionalDAO.cs    # CRUD de profissionais
 │       ├── AtendimentoDAO.cs     # CRUD de atendimentos (global)
 │       ├── BelAtendimentoDAO.cs  # CRUD de atendimentos (salao)
-│       ├── AtendimentoServicoDAO.cs # CRUD pivoi N:N
-│       ├── TipoAtendimentoDAO.cs # CRUD tipos de atendimento (salao)
-│       └── RelatorioDAO.cs      # Queries (previsto para 2a fase: relatorios financeiros)
+│   ├── AtendimentoServicoDAO.cs # CRUD pivoi N:N
+│   ├── TipoAtendimentoDAO.cs # CRUD tipos de atendimento (salao)
+│   ├── BackupDAO.cs           # Gera copia consistente do banco (VACUUM INTO)
+│   └── RelatorioDAO.cs      # Queries (previsto para 2a fase: relatorios financeiros)
 ├── Views/                        # Pages XAML + code-behind (a implementar)
-├── MainPage.xaml                 # Tela de Backup/Restore
+├── MainPage.xaml                 # Tela inicial + Backup (Salvar no Windows / Compartilhar no Android)
 ├── App.xaml.cs                   # Validacao de banco na inicializacao
 ├── AppShell.xaml                 # Shell de navegacao
 └── MauiProgram.cs               # Configuracao DI + startup
@@ -103,32 +104,56 @@ DialcronSB/
 
 ### Caminhos por Plataforma
 
-- **Windows**: `AppDomain.CurrentDomain.BaseDirectory` (ao lado do .exe)
-- **Android**: `FilesDir/DialcronAgendamentos/DialcronSBDB.db`
+Definidos em `Database.BuildDbPath()`:
+
+- **Windows**: `AppDomain.CurrentDomain.BaseDirectory` (ao lado do .exe, sem subpasta)
+- **Android**: `FileSystem.AppDataDirectory` + `DialcronAgendamentos` (= `FilesDir/DialcronAgendamentos/DialcronSBDB.db`)
+- O `ApplicationId` e `br.com.dialcron.salao`; trocar o pacote exige desinstalar o app anterior
+
+### Banco-Padrao (seed embutido)
+
+- O arquivo `DialcronSB/Resources/Raw/DialcronSB_PADRAO.db` e o banco vazio com as 10 tabelas (schema identico ao `Documentacao/DialcronSB.sql`)
+- Por estar em `Resources/Raw/**`, ele e embutido no pacote automaticamente pelo `MauiAsset` do `.csproj`
+- No primeiro uso, `CreateDatabaseAsync()` copia o seed do pacote (`FileSystem.OpenAppPackageFileAsync`) para `DbPath`
+- No Android o `.db` fica na pasta privada do app: sem permissao, invisivel no gerenciador de arquivos e apagado ao desinstalar. Inspecao via `adb shell run-as br.com.dialcron.salao ls files/DialcronAgendamentos/`
 
 ### Fluxo de Inicializacao (MainPage.OnAppearing)
 
 ```
 MainPage aparece
-  -> Database.DatabaseExists()?
-    -> SIM: Database.InitializeAsync() -> AtualizarInfoBanco()
-    -> NAO: Database.CreateDatabaseAsync() -> MostrarStatus("Banco criado")
+  -> Database.Instance.InitializeAsync()
+    -> ja inicializado? SIM: retorna a mesma conexao
+    -> DatabaseExists()? SIM: OpenConnectionAsync()
+                     NAO: CreateDatabaseAsync() (copia o seed)
+    -> PRAGMA foreign_keys = ON
 ```
 
 ### Metodos Database.cs
 
+- `Instance` (singleton estatico) - acessado direto pelas Pages (`AppShell`/`App` sao instanciados com `new`, sem DI)
 - `DbPath` (propriedade estatica) - caminho do banco por plataforma
 - `DatabaseExists()` - verifica se o arquivo existe
-- `CreateDatabaseAsync()` - cria diretorio + banco + 12 tabelas
-- `InitializeAsync()` - abre conexao + cria tabelas se nao existirem
+- `CreateDatabaseAsync()` - cria diretorio + copia o seed do pacote
+- `OpenConnectionAsync()` - abre a conexao e ativa `PRAGMA foreign_keys = ON`
+- `InitializeAsync()` - idempotente: cria o banco se faltar e devolve a `SQLiteAsyncConnection`
 
 ### Banco Versionado (sincronizacao entre PCs)
 
 - O `publish/DialcronSBDB.db` e versionado no git e funciona como "banco fonte" (nao ha banco na raiz)
 - Apos cada `dotnet publish`, o banco permanece em `publish/DialcronSBDB.db` (ao lado do `.exe`); o target `CopySeedDatabase` apenas remove o `.pdb` de debug
-- O `.gitignore` permite versionar `publish/*.db`, ignorando os demais `*.db`
+- O `.gitignore` permite versionar `publish/*.db` e `DialcronSB/Resources/Raw/*.db` (seed), ignorando os demais `*.db`
+- A sincronizacao vale **apenas entre PCs**; no Android o banco vive no aparelho (use Backup/Restore para levar dados entre dispositivos)
 - Fluxo entre varios PCs: rodar o app -> o banco e criado/atualizado em `publish/` -> commitar o `publish/DialcronSBDB.db` atualizado -> atualizar nos demais PCs
 - Cuidado: por ser binario, editar o banco em varios PCs ao mesmo tempo gera conflito de merge (sincronizar um PC por vez)
+
+## Backup do Banco
+
+- O botao "Backup" da `MainPage` gera o arquivo e o entrega conforme a plataforma
+- Nome padrao: `DialcronSB_Backup_yyyyMMddHHmm.db` (`BackupDAO.BuildBackupFileName()`, com `InvariantCulture`)
+- A copia usa `VACUUM INTO` (snapshot consistente em arquivo unico); o destino e apagado antes, pois o comando falha se o arquivo ja existir
+- **Windows**: gera o arquivo em `FileSystem.CacheDirectory` e abre o dialogo nativo "Salvar como" via `FileSaver.Default.SaveAsync` (CommunityToolkit.Maui); o temporario e removido ao concluir
+- **Android**: gera o arquivo em `FileSystem.CacheDirectory/sharing-root` (pasta compartilhada pelo FileProvider do MAUI) e abre o seletor de apps via `Share.Default.RequestAsync`
+- O `AndroidManifest.xml` nao precisa de mudanca: o FileProvider e registrado pelo proprio Essentials
 
 ## Publicacao Standalone
 
@@ -213,7 +238,10 @@ dotnet publish -f net10.0-android -c Release \
 ```bash
 dotnet add package sqlite-net-pcl
 dotnet add package Plugin.Maui.Calendar
+dotnet add package CommunityToolkit.Maui
 ```
+
+> `CommunityToolkit.Maui` esta fixado na **14.1.1**: a 15.x exige `Microsoft.Maui.Controls >= 10.0.90`, incompativel com o `MauiVersion 10.0.71` do projeto. O `UseMauiCommunityToolkit()` precisa estar no `MauiProgram.cs`.
 
 ## Abrir no VS Code
 
