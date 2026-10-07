@@ -29,6 +29,30 @@ Este repositorio reune os artefatos de levantamento, analise e garantia de quali
 
 > Escopo atual: agendamento e atribuicao de servicos. Relatorios de faturamento/financeiro ficam para um segundo momento.
 
+## Paleta de Cores
+
+A identidade visual utiliza a paleta definida em [`DialcronSB/Resources/Styles/Colors.xaml`](DialcronSB/Resources/Styles/Colors.xaml):
+
+| Chave | Cor (HEX) | Finalidade |
+|-------|-----------|------------|
+| `Primary` | `#8E3B52` | Cor principal |
+| `PrimaryDark` | `#DFA6AF` | Primária (modo escuro) |
+| `Secondary` | `#F5E8E5` | Cor secundária |
+| `Tertiary` | `#C77C8A` | Destaques |
+| `Creme` | `#FFF8F5` | Fundo claro |
+| `White` | `#FFFFFF` | Branco |
+| `Black` / `Gray900` | `#3B3032` | Texto principal |
+| `Gray100` - `Gray600`, `Gray950` | Tons terrosos | Neutros |
+| `DarkBackground` | `#2F1D23` | Fundo (modo escuro) |
+| `DarkSurface` | `#3B262C` | Superfícies (modo escuro) |
+| `Sucesso` | `#72A68A` | Estados positivos |
+| `Atencao` | `#D6A84F` | Alertas |
+| `Erro` | `#C95C62` | Erros |
+
+## Guia de Criação de Telas
+
+Consulte o [Guia de Criação de Telas](Documentacao/CriacaoDeTelas.md) para orientações sobre criação de páginas (XAML + code-behind), rotas, navegação e acesso a dados via DAO.
+
 ## Pre-requisitos
 
 - [.NET 10+ SDK](https://dotnet.microsoft.com/download)
