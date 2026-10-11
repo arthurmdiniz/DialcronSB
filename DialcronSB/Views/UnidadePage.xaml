@@ -4,27 +4,19 @@
              x:Class="DialcronSB.Views.UnidadePage"
              Title="Unidades">
 
-    <Grid
-        Padding="24"
-        ColumnDefinitions="*,*"
-        ColumnSpacing="24"
-        RowDefinitions="Auto,Auto,*"
-        RowSpacing="16">
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Padding="24" Spacing="16">
+                <Label
+                    Text="Cadastro de Unidades"
+                    Style="{StaticResource Headline}"
+                    SemanticProperties.HeadingLevel="Level1" />
 
-        <Label
-            Grid.Row="0"
-            Grid.ColumnSpan="2"
-            Text="Cadastro Unidades"
-            Style="{StaticResource Headline}"
-            SemanticProperties.HeadingLevel="Level1" />
-
-        <Border
-            x:Name="ListagemRegistros"
-            Grid.Row="1"
-            Grid.ColumnSpan="2"
-            Padding="16"
-            BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource DarkSurface}}">
-            <Grid RowDefinitions="Auto,Auto,*" RowSpacing="12">
+                <Border
+                    x:Name="ListagemRegistros"
+                    Padding="16"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource DarkSurface}}">
+                    <Grid RowDefinitions="Auto,Auto,160" RowSpacing="12">
                 <Label
                     Text="Lista"
                     Style="{StaticResource SubHeadline}"
@@ -40,33 +32,29 @@
                     <Label Grid.Column="1" Text="Nome" FontAttributes="Bold" />
                 </Grid>
 
-                <CollectionView
-                    x:Name="UnidadesCollection"
-                    Grid.Row="2"
-                    SelectionMode="Single"
-                    SelectionChanged="OnSelecaoChanged"
-                    EmptyView="Nenhuma unidade cadastrada"
-                    HeightRequest="150"
-                    VerticalOptions="Start">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid ColumnDefinitions="60,*" Padding="0,8">
-                                <Label Text="{Binding Id}" />
-                                <Label Grid.Column="1" Text="{Binding Nome}" />
-                            </Grid>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </Grid>
-        </Border>
+                        <CollectionView
+                            x:Name="UnidadesCollection"
+                            Grid.Row="2"
+                            SelectionMode="Single"
+                            SelectionChanged="OnSelecaoChanged"
+                            EmptyView="Nenhuma unidade cadastrada">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="60,*" Padding="0,8">
+                                        <Label Text="{Binding Id}" />
+                                        <Label Grid.Column="1" Text="{Binding Nome}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </Grid>
+                </Border>
 
-        <Border
-            x:Name="DadosFormulario"
-            Grid.Row="2"
-            Grid.ColumnSpan="2"
-            Padding="16"
-            BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource DarkSurface}}">
-            <VerticalStackLayout Spacing="16">
+                <Border
+                    x:Name="DadosFormulario"
+                    Padding="16"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource DarkSurface}}">
+                    <VerticalStackLayout Spacing="16">
                 <Label
                     Text="Dados da unidade"
                     Style="{StaticResource SubHeadline}"
@@ -74,7 +62,7 @@
                     HorizontalTextAlignment="Start"
                     SemanticProperties.HeadingLevel="Level2" />
 
-                <Grid x:Name="Linha1" ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <Grid x:Name="Linha1" ColumnDefinitions="*,*" ColumnSpacing="12">
                     <VerticalStackLayout Grid.Column="0" Spacing="3">
                         <Label Text="Nome Fantasia" />
                         <Entry
@@ -88,9 +76,9 @@
                             x:Name="RazaoSocialEntry"
                             Placeholder="Razão Social" />
                     </VerticalStackLayout>
-                </Grid>
+                        </Grid>
 
-                <Grid x:Name="Linha2" ColumnDefinitions="*,*,*" ColumnSpacing="12">
+                        <Grid x:Name="Linha2" ColumnDefinitions="*,*,*" ColumnSpacing="12">
                     <VerticalStackLayout Grid.Column="0" Spacing="2">
                         <Label Text="CNPJ" />
                         <Entry
@@ -111,33 +99,103 @@
                             x:Name="IMEntry"
                             Placeholder="Insc. Municipal" />
                     </VerticalStackLayout>
-                </Grid>
+                        </Grid>
 
-                <Grid x:Name="Linha3" ColumnDefinitions="1*,3*" ColumnSpacing="12">
+                        <Grid x:Name="Linha3" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                     <VerticalStackLayout Grid.Column="0" Spacing="3">
                         <Label Text="CEP" />
                         <Entry
-            x:Name="CEPEntry"
-            Placeholder="CEP"
-            HorizontalOptions="Start"
-            WidthRequest="120" />
+                            x:Name="CEPEntry"
+                            Placeholder="CEP"
+                            WidthRequest="120" />
                     </VerticalStackLayout>
 
                     <VerticalStackLayout Grid.Column="1" Spacing="3">
                         <Label Text="Logradouro" />
                         <Entry
-            x:Name="LogradouroEntry"
-            Placeholder="Logradouro"
-            HorizontalOptions="Fill" />
+                            x:Name="LogradouroEntry"
+                            Placeholder="Logradouro" />
                     </VerticalStackLayout>
-                </Grid>
 
-                <VerticalStackLayout Spacing="3">
-                   
-                </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="2" Spacing="3">
+                        <Label Text="Numero" />
+                        <Entry
+                            x:Name="NumeroEntry"
+                            Placeholder="Número"
+                            WidthRequest="100" />
+                    </VerticalStackLayout>
 
 
-                <HorizontalStackLayout Spacing="12">
+                        </Grid>
+
+                        <Grid x:Name="Linha4" ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <VerticalStackLayout Grid.Column="0" Spacing="3">
+                        <Label Text="Bairro" />
+                        <Entry
+                            x:Name="BairroEntry"
+                            Placeholder="Bairro"
+                            WidthRequest="120" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="1" Spacing="3">
+                        <Label Text="Complemento" />
+                        <Entry
+                            x:Name="ComplementoEntry"
+                            Placeholder="Complemento" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="1" Grid.Row="1" Spacing="3">
+                        <Label Text="Municipio" />
+                        <Entry
+                            x:Name="MunicipioEntry"
+                            Placeholder="Município" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="0" Grid.Row="1" Spacing="3">
+                        <Label Text="UF" />
+                        <Entry
+                            x:Name="UFEntry"
+                            Placeholder="UF"
+                            WidthRequest="70" />
+                    </VerticalStackLayout>
+
+                        </Grid>
+
+                        <Grid x:Name="Linha5" ColumnDefinitions="*,*" ColumnSpacing="12" RowDefinitions="Auto,Auto" RowSpacing="12">
+                    <VerticalStackLayout Grid.Column="0" Spacing="3">
+                        <Label Text="E-mail" />
+                        <Entry
+                            x:Name="EmailEntry"
+                            Placeholder="E-mail"
+                            Keyboard="Email" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="1" Spacing="3">
+                        <Label Text="DDD" />
+                        <Entry
+                            x:Name="DDDEntry"
+                            Placeholder="DDD"
+                            WidthRequest="70"
+                            Keyboard="Telephone" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="0" Grid.Row="1" Spacing="3">
+                        <Label Text="Telefone" />
+                        <Entry
+                            x:Name="TelefoneEntry"
+                            Placeholder="Telefone"
+                            Keyboard="Telephone" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="1" Grid.Row="1" Spacing="3">
+                        <Label Text="Cliente" />
+                        <Entry
+                            x:Name="ClienteEntry"
+                            Placeholder="Cliente" />
+                    </VerticalStackLayout>
+                        </Grid>
+
+                        <HorizontalStackLayout Spacing="12">
                     <Label
                         Text="Ativo"
                         VerticalOptions="Center" />
@@ -149,17 +207,12 @@
                         x:Name="AtivoStatusLabel"
                         Text="Ativo"
                         VerticalOptions="Center" />
-                </HorizontalStackLayout>
-                
-                
-                
-                
-                
+                        </HorizontalStackLayout>
 
-                <Grid
-                    ColumnDefinitions="*,*,*"
-                    ColumnSpacing="12"
-                    Margin="0,8,0,0">
+                        <Grid
+                            ColumnDefinitions="*,*,*"
+                            ColumnSpacing="12"
+                            Margin="0,8,0,0">
                     <Button
                         Grid.Column="0"
                         x:Name="IncluirBtn"
@@ -178,9 +231,11 @@
                         Text="Cancelar"
                         Clicked="OnCancelarClicked"
                         SemanticProperties.Hint="Cancela a edição e limpa o formulário" />
-                </Grid>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
             </VerticalStackLayout>
-        </Border>
+        </ScrollView>
     </Grid>
 
 </ContentPage>

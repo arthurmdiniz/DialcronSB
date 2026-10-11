@@ -6,7 +6,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "dotnet watch run",
-            "program": "${workspaceFolder}/DialcronSB/build/net10.0-windows10.0.19041.0/win-x64/DialcronSB.exe",
+            "program": "${workspaceFolder}/DialcronSB/build/DialcronSB-Win-.exe",
             "args": [],
             "cwd": "${workspaceFolder}/DialcronSB",
             "console": "internalConsole",
