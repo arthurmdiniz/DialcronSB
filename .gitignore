@@ -1,8 +1,9 @@
 # Build outputs
 [Dd]ialcronSB/[Bb]in/
 [Dd]ialcronSB/[Oo]bj/
-[Pp]ublish/*
-![Pp]ublish/[Dd]ialcronSBDB.db
+DialcronSB/build/*
+!DialcronSB/build/DialcronSBDB.db
+DialcronSB/release/*
 
 # .NET / MAUI
 *.nupkg
@@ -35,8 +36,8 @@ project.nuget.cache
 *.db-journal
 *.db-shm
 *.db-wal
-!publish/*.db
 !DialcronSB/Resources/Raw/*.db
+!Documentacao/DialcronSB_Padrao.db
 
 # Windows
 Thumbs.db

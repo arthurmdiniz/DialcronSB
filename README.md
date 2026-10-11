@@ -115,7 +115,10 @@ Documentacao/                    # Artefatos de requisitos e documentacao
 └── TemplateUNA.pptx              # Template da apresentacao
 DocumentacaoPrivada/            # Arquivos locais (ignorados pelo git; nao vao para o repositorio)
 DialcronSB/
-├── publish.ps1                   # Script de publicacao standalone
+├── Directory.Build.props         # Saida em build/, exe DialcronSB-Win-<Config> e publish standalone em release/
+├── DialcronSB-Release.lnk        # Atalho para DialcronSB/build/DialcronSB-Win-Release.exe
+├── build/                        # Saida de compilacao (gerada; nao versionada)
+├── release/                      # Executavel standalone single-file (gerada; nao versionada)
 ├── Resources/Raw/
 │   └── DialcronSB_PADRAO.db      # Banco-padrao (seed) embutido no app
 ├── Models/                       # Modelos do dominio (a implementar)
@@ -136,14 +139,14 @@ O banco de trabalho `DialcronSBDB.db` e criado no primeiro uso do app, copiando 
 
 Ao abrir o app, o banco e validado automaticamente:
 
-- **Windows**: Verifica se `DialcronSBDB.db` existe ao lado do `.exe` (em `publish/`, quando publicado)
+- **Windows**: Verifica se `DialcronSBDB.db` existe ao lado do `.exe` (em `DialcronSB/build/`; ou `DialcronSB/release/` quando publicado)
 - **Android**: Verifica se o banco existe em `FilesDir/DialcronAgendamentos/DialcronSBDB.db`
 
 Se o banco nao existir, ele e criado automaticamente a partir do seed, com as **9 tabelas** do schema (`cad_*` e `bel_*`). A tela de Backup exibe o caminho e tamanho do banco.
 
 ### Sincronizacao entre PCs
 
-O seed `Resources/Raw/DialcronSB_PADRAO.db` e versionado e serve de base para novos bancos. O banco de trabalho `DialcronSBDB.db` tambem pode ser versionado em `publish/` (o `.gitignore` o permite), mas atualmente a pasta `publish/` e gerada sob demanda pela publicacao e nao contem o banco fonte.
+O seed `Resources/Raw/DialcronSB_PADRAO.db` e versionado e serve de base para novos bancos. O banco de trabalho `DialcronSBDB.db` tambem pode ser versionado em `DialcronSB/build/` (o `.gitignore` o permite), mas a pasta `build/` e gerada sob demanda pela compilacao e normalmente nao contem o banco no repositorio.
 
 > Cuidado: por ser um arquivo binario, editar o banco em varios PCs ao mesmo tempo gera conflito de merge no git. Sincronize um PC por vez.
 
@@ -151,12 +154,17 @@ O seed `Resources/Raw/DialcronSB_PADRAO.db` e versionado e serve de base para no
 
 ### Windows
 
+A saida de build e consolidada na pasta `DialcronSB/build/` pelo `Directory.Build.props`, e o executavel recebe o sufixo de configuracao: `DialcronSB-Win-Debug.exe` ou `DialcronSB-Win-Release.exe`.
+
 ```bash
-# Compilar para Windows (Debug)
+# Compilar para Windows (Debug) - gera DialcronSB/build/DialcronSB-Win-Debug.exe
 dotnet build -f net10.0-windows10.0.19041.0
 
+# Compilar para Windows (Release) - gera DialcronSB/build/DialcronSB-Win-Release.exe
+dotnet build -c Release -f net10.0-windows10.0.19041.0
+
 # Rodar no Windows
-dotnet run -f net10.0-windows10.0.19041.0
+dotnet run -c Release -f net10.0-windows10.0.19041.0
 ```
 
 ### Android
@@ -174,17 +182,16 @@ dotnet publish -f net10.0-android -c Release
 
 ### Publicacao Standalone (Windows)
 
-Gera um unico executavel com o runtime .NET embutido (sem precisar instalar o .NET na maquina). A saida e a pasta `publish/` (na raiz do repo), onde o app cria/usa o banco de trabalho na primeira execucao:
+Gera um unico executavel com o runtime .NET embutido (sem precisar instalar o .NET na maquina). A saida e a pasta `DialcronSB/release/`, onde o app cria/usa o banco de trabalho na primeira execucao:
 
-- `DialcronSB.exe` (~250 MB) - app + runtime embutidos num unico exe (single-file)
+- `DialcronSB-Win-Release.exe` (~250 MB) - app + runtime embutidos num unico exe (single-file)
 - `DialcronSBDB.db` - banco de trabalho, criado automaticamente na primeira execucao (a partir do seed embutido)
 
-```bash
-# Usar o script
-.\publish.ps1
+As propriedades de publicacao standalone (`SelfContained`, `PublishSingleFile`, `PublishTrimmed=false` e a pasta `DialcronSB/release/`) ficam no `Directory.Build.props`.
 
-# Ou manualmente
-dotnet publish -f net10.0-windows10.0.19041.0 -c Release -o publish
+```bash
+# Publicar (gera DialcronSB/release/DialcronSB-Win-Release.exe)
+dotnet publish -c Release -f net10.0-windows10.0.19041.0
 ```
 
 > Obs: publique SEM `-r win-x64` explicito (evita erro NU1102 ao tentar baixar o runtime Mono).

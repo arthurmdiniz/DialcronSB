@@ -53,7 +53,7 @@
 .github/
 └── workflows/
     └── build.yml                 # CI/CD: compila Windows + Android
-.gitignore                        # Ignora build outputs; permite versionar *.db em publish/ e o seed
+.gitignore                        # Ignora build outputs; permite versionar DialcronSB/build/DialcronSBDB.db e o seed
 Documentacao/                     # Artefatos de requisitos e documentacao
 ├── SalaoDiagrama.drawio          # Diagrama de classes (editavel)
 ├── SalaoDiagrama-Classe.drawio.png # Diagrama de classes (exportado)
@@ -68,7 +68,10 @@ Documentacao/                     # Artefatos de requisitos e documentacao
 └── TemplateUNA.pptx              # Template da apresentacao
 DocumentacaoPrivada/             # Arquivos locais (ignorados pelo git; nao vao para o repositorio remoto)
 DialcronSB/
-├── publish.ps1                   # Script de publicacao standalone
+├── Directory.Build.props         # Saida em build/, exe DialcronSB-Win-<Config> e publish standalone em release/
+├── DialcronSB-Release.lnk        # Atalho para DialcronSB/build/DialcronSB-Win-Release.exe
+├── build/                        # Saida de compilacao (gerada; nao versionada)
+├── release/                      # Executavel standalone single-file (gerada; nao versionada)
 ├── Resources/Raw/
 │   └── DialcronSB_PADRAO.db      # Banco-padrao (seed), versionado e embutido no app
 ├── Models/                       # Modelos do dominio (a implementar)
@@ -89,7 +92,7 @@ DialcronSB/
 
 Definidos em `Database.BuildDbPath()`:
 
-- **Windows**: `AppDomain.CurrentDomain.BaseDirectory` (ao lado do .exe, sem subpasta)
+- **Windows**: `AppDomain.CurrentDomain.BaseDirectory` (ao lado do .exe, sem subpasta; com a saida consolidada, fica em `DialcronSB/build/` ou `DialcronSB/release/`)
 - **Android**: `FileSystem.AppDataDirectory` + `DialcronAgendamentos` (= `FilesDir/DialcronAgendamentos/DialcronSBDB.db`)
 - O `ApplicationId` e `br.com.dialcron.salao`; trocar o pacote exige desinstalar o app anterior
 
@@ -123,9 +126,9 @@ MainPage aparece
 ### Banco Versionado (sincronizacao entre PCs)
 
 - O seed `DialcronSB/Resources/Raw/DialcronSB_PADRAO.db` e versionado no git e serve de base para novos bancos
-- O banco de trabalho `publish/DialcronSBDB.db` e criado no primeiro uso (ao lado do `.exe`); o `.gitignore` permite versiona-lo, mas a pasta `publish/` e gerada sob demanda e nao contem o banco no repositorio
+- O banco de trabalho `DialcronSB/build/DialcronSBDB.db` e criado no primeiro uso (ao lado do `.exe`); o `.gitignore` permite versiona-lo, mas a pasta `build/` e gerada sob demanda e normalmente nao contem o banco no repositorio
 - O target `CopySeedDatabase` (pos-publish) apenas remove o `.pdb` de debug; nao copia banco
-- O `.gitignore` permite versionar `publish/*.db` e `DialcronSB/Resources/Raw/*.db` (seed), ignorando os demais `*.db`
+- O `.gitignore` permite versionar `DialcronSB/build/DialcronSBDB.db` e `DialcronSB/Resources/Raw/*.db` (seed), ignorando os demais `*.db`
 - A sincronizacao vale **apenas entre PCs**; no Android o banco vive no aparelho (use Backup/Restore para levar dados entre dispositivos)
 - Cuidado: por ser binario, editar o banco em varios PCs ao mesmo tempo gera conflito de merge (sincronizar um PC por vez)
 
@@ -140,14 +143,15 @@ MainPage aparece
 
 ## Publicacao Standalone
 
-### Configuracao (.csproj)
+### Configuracao (Directory.Build.props)
 
-- `SelfContained=true` no .csproj (runtime embutido)
+- `SelfContained=true` (runtime embutido)
 - `PublishTrimmed=false` (sem trimming para MAUI)
-- `WindowsPackageType=None` (app desempacotado)
+- `WindowsPackageType=None` no `.csproj` (app desempacotado)
 - `PublishSingleFile=true` (Windows) - empacota runtime + app em um unico `.exe`
 - `IncludeNativeLibrariesForSelfExtract=true` + `IncludeAllContentForSelfExtract=true` (extraem dlls nativas/UWP em runtime)
-- Resultado: o `publish/` fica apenas com `DialcronSB.exe` (~250 MB); o `DialcronSBDB.db` e criado ao lado dele no primeiro uso
+- `OutputPath` = `DialcronSB/build/` (saida de build consolidada, sem subpastas no Windows) e `AssemblyName` = `DialcronSB-Win-$(Configuration)`
+- `PublishDir` = `DialcronSB/release/` - Resultado: o `release/` fica apenas com `DialcronSB-Win-Release.exe` (~250 MB); o `DialcronSBDB.db` e criado ao lado dele no primeiro uso
 
 ### Alvo MSBuild `CopySeedDatabase` (apos Publish)
 
@@ -158,11 +162,8 @@ MainPage aparece
 ### Comandos
 
 ```bash
-# Publicar (gera a pasta publish/ na RAIZ do repo; banco criado no 1o uso)
-dotnet publish -f net10.0-windows10.0.19041.0 -c Release -o publish
-
-# Ou usar o script
-.\publish.ps1
+# Publicar (gera DialcronSB/release/DialcronSB-Win-Release.exe; banco criado no 1o uso)
+dotnet publish -c Release -f net10.0-windows10.0.19041.0
 ```
 
 > Nota: publique SEM `-r win-x64` explicito. O MAUI Windows usa o runtime CoreCLR por padrao; forcar `-r win-x64` tenta baixar o runtime Mono e falha (NU1102).
@@ -239,14 +240,14 @@ code .
 # Restaurar pacotes
 dotnet restore
 
-# Compilar (Debug)
+# Compilar (Debug) - gera DialcronSB/build/DialcronSB-Win-Debug.exe
 dotnet build -f net10.0-windows10.0.19041.0
 
 # Rodar no Windows (Debug)
 dotnet run -f net10.0-windows10.0.19041.0
 
-# Publicar standalone (Release) - gera publish/ na raiz; banco criado no 1o uso
-dotnet publish -f net10.0-windows10.0.19041.0 -c Release -o publish
+# Publicar standalone (Release) - gera DialcronSB/release/DialcronSB-Win-Release.exe; banco criado no 1o uso
+dotnet publish -c Release -f net10.0-windows10.0.19041.0
 
 # Rodar no Android
 dotnet run -f net10.0-android
