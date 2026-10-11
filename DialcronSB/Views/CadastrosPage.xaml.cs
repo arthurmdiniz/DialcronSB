@@ -21,4 +21,9 @@ public partial class CadastrosPage : ContentPage
 	{
 		await Navegacao.IrPara("profissional");
 	}
+
+	private async void OnUnidadesClicked(object? sender, EventArgs e)
+	{
+		await Navegacao.IrPara("unidade");
+	}
 }
