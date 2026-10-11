@@ -2,13 +2,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "DialcronSB (Windows - Hot Reload)",
+            "name": ".NET MAUI Watch (Hot Reload via CLI)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/DialcronSB/bin/Debug/net10.0-windows10.0.19041.0/win-x64/DialcronSB.exe",
+            "preLaunchTask": "dotnet watch run",
+            "program": "${workspaceFolder}/DialcronSB/build/DialcronSB-Win-.exe",
             "args": [],
-            "cwd": "${workspaceFolder}/DialcronSB/bin/Debug/net10.0-windows10.0.19041.0/win-x64",
+            "cwd": "${workspaceFolder}/DialcronSB",
             "console": "internalConsole",
             "stopAtEntry": false
         }

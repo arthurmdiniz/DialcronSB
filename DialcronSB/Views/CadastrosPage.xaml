@@ -34,6 +34,13 @@
             Clicked="OnProfissionaisClicked"
             SemanticProperties.Hint="Abre o cadastro de profissionais"
             HorizontalOptions="Fill" />
+        
+        <Button
+            x:Name="UnidadesBtn"
+            Text="Unidades"
+            Clicked="OnUnidadesClicked"
+            SemanticProperties.Hint="Abre o cadastro de unidades"
+            HorizontalOptions="Fill" />
 
     </VerticalStackLayout>
 

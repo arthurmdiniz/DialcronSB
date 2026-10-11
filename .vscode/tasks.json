@@ -2,18 +2,60 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
+            "label": "Executar Dialcron (sem depuração)",
+            "type": "shell",
             "command": "dotnet",
-            "type": "process",
             "args": [
-                "build",
+                "run",
+                "--project",
                 "${workspaceFolder}/DialcronSB/DialcronSB.csproj",
                 "-f",
-                "net10.0-windows10.0.19041.0",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
+                "net10.0-windows10.0.19041.0"
             ],
-            "problemMatcher": "$msCompile"
+            "isBackground": false,
+            "problemMatcher": {
+                "owner": "csharp",
+                "fileLocation": ["relative", "${workspaceFolder}"],
+                "pattern": {
+                    "regexp": "^(.*)\\(([0-9]+),([0-9]+)\\): error ([A-Z]+[0-9]+): (.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        },
+        {
+            "label": "dotnet watch run",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "watch",
+                "run",
+                "--project",
+                "${workspaceFolder}/DialcronSB/DialcronSB.csproj",
+                "-f",
+                "net10.0-windows10.0.19041.0"
+            ],
+            "isBackground": true,
+            "problemMatcher": {
+                "owner": "csharp",
+                "fileLocation": ["relative", "${workspaceFolder}"],
+                "pattern": {
+                    "regexp": "^(.*)\\(([0-9]+),([0-9]+)\\): error ([A-Z]+[0-9]+): (.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^.*dotnet watch.*$",
+                    "endsPattern": "^.*(Hot reload changes applied|Started|Building).*$"
+                }
+            }
         }
     ]
 }

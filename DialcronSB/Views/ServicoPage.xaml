@@ -15,7 +15,7 @@
             SemanticProperties.HeadingLevel="Level1" />
 
         <Label
-            Text="Tela em construção"
+            Text="Tela em construçãooooooooo"
             Style="{StaticResource SubHeadline}" />
 
     </VerticalStackLayout>

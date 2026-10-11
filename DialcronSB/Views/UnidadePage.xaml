@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DialcronSB.Views.UnidadePage"
+             Title="Unidades">
+
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Padding="24" Spacing="16">
+                <Label
+                    Text="Cadastro de Unidades"
+                    Style="{StaticResource Headline}"
+                    SemanticProperties.HeadingLevel="Level1" />
+
+                <Border
+                    x:Name="ListagemRegistros"
+                    Padding="16"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource DarkSurface}}">
+                    <Grid RowDefinitions="Auto,Auto,160" RowSpacing="12">
+                <Label
+                    Text="Lista"
+                    Style="{StaticResource SubHeadline}"
+                    HorizontalOptions="Start"
+                    HorizontalTextAlignment="Start"
+                    SemanticProperties.HeadingLevel="Level2" />
+
+                <Grid
+                    Grid.Row="1"
+                    ColumnDefinitions="60,*"
+                    Padding="0,4">
+                    <Label Text="ID" FontAttributes="Bold" />
+                    <Label Grid.Column="1" Text="Nome" FontAttributes="Bold" />
+                </Grid>
+
+                        <CollectionView
+                            x:Name="UnidadesCollection"
+                            Grid.Row="2"
+                            SelectionMode="Single"
+                            SelectionChanged="OnSelecaoChanged"
+                            EmptyView="Nenhuma unidade cadastrada">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="60,*" Padding="0,8">
+                                        <Label Text="{Binding Id}" />
+                                        <Label Grid.Column="1" Text="{Binding Nome}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </Grid>
+                </Border>
+
+                <Border
+                    x:Name="DadosFormulario"
+                    Padding="16"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource DarkSurface}}">
+                    <VerticalStackLayout Spacing="16">
+                <Label
+                    Text="Dados da unidade"
+                    Style="{StaticResource SubHeadline}"
+                    HorizontalOptions="Start"
+                    HorizontalTextAlignment="Start"
+                    SemanticProperties.HeadingLevel="Level2" />
+
+                        <Grid x:Name="Linha1" ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <VerticalStackLayout Grid.Column="0" Spacing="3">
+                        <Label Text="Nome Fantasia" />
+                        <Entry
+                            x:Name="NomeEntry"
+                            Placeholder="Nome Fantasia" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="1" Spacing="3">
+                        <Label Text="Razão Social" />
+                        <Entry
+                            x:Name="RazaoSocialEntry"
+                            Placeholder="Razão Social" />
+                    </VerticalStackLayout>
+                        </Grid>
+
+                        <Grid x:Name="Linha2" ColumnDefinitions="*,*,*" ColumnSpacing="12">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="CNPJ" />
+                        <Entry
+                            x:Name="CNPJEntry"
+                            Placeholder="CNPJ" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="1" Spacing="2">
+                        <Label Text="Insc. Estadual" />
+                        <Entry
+                            x:Name="IEEntry"
+                            Placeholder="Insc. Estadual" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="2" Spacing="2">
+                        <Label Text="Insc. Municipal" />
+                        <Entry
+                            x:Name="IMEntry"
+                            Placeholder="Insc. Municipal" />
+                    </VerticalStackLayout>
+                        </Grid>
+
+                        <Grid x:Name="Linha3" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                    <VerticalStackLayout Grid.Column="0" Spacing="3">
+                        <Label Text="CEP" />
+                        <Entry
+                            x:Name="CEPEntry"
+                            Placeholder="CEP"
+                            WidthRequest="120" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="1" Spacing="3">
+                        <Label Text="Logradouro" />
+                        <Entry
+                            x:Name="LogradouroEntry"
+                            Placeholder="Logradouro" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="2" Spacing="3">
+                        <Label Text="Numero" />
+                        <Entry
+                            x:Name="NumeroEntry"
+                            Placeholder="Número"
+                            WidthRequest="100" />
+                    </VerticalStackLayout>
+
+
+                        </Grid>
+
+                        <Grid x:Name="Linha4" ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <VerticalStackLayout Grid.Column="0" Spacing="3">
+                        <Label Text="Bairro" />
+                        <Entry
+                            x:Name="BairroEntry"
+                            Placeholder="Bairro"
+                            WidthRequest="120" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="1" Spacing="3">
+                        <Label Text="Complemento" />
+                        <Entry
+                            x:Name="ComplementoEntry"
+                            Placeholder="Complemento" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="1" Grid.Row="1" Spacing="3">
+                        <Label Text="Municipio" />
+                        <Entry
+                            x:Name="MunicipioEntry"
+                            Placeholder="Município" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="0" Grid.Row="1" Spacing="3">
+                        <Label Text="UF" />
+                        <Entry
+                            x:Name="UFEntry"
+                            Placeholder="UF"
+                            WidthRequest="70" />
+                    </VerticalStackLayout>
+
+                        </Grid>
+
+                        <Grid x:Name="Linha5" ColumnDefinitions="*,*" ColumnSpacing="12" RowDefinitions="Auto,Auto" RowSpacing="12">
+                    <VerticalStackLayout Grid.Column="0" Spacing="3">
+                        <Label Text="E-mail" />
+                        <Entry
+                            x:Name="EmailEntry"
+                            Placeholder="E-mail"
+                            Keyboard="Email" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="1" Spacing="3">
+                        <Label Text="DDD" />
+                        <Entry
+                            x:Name="DDDEntry"
+                            Placeholder="DDD"
+                            WidthRequest="70"
+                            Keyboard="Telephone" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="0" Grid.Row="1" Spacing="3">
+                        <Label Text="Telefone" />
+                        <Entry
+                            x:Name="TelefoneEntry"
+                            Placeholder="Telefone"
+                            Keyboard="Telephone" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="1" Grid.Row="1" Spacing="3">
+                        <Label Text="Cliente" />
+                        <Entry
+                            x:Name="ClienteEntry"
+                            Placeholder="Cliente" />
+                    </VerticalStackLayout>
+                        </Grid>
+
+                        <HorizontalStackLayout Spacing="12">
+                    <Label
+                        Text="Ativo"
+                        VerticalOptions="Center" />
+                    <Switch
+                        x:Name="AtivoSwitch"
+                        IsToggled="True"
+                        Toggled="OnAtivoToggled" />
+                    <Label
+                        x:Name="AtivoStatusLabel"
+                        Text="Ativo"
+                        VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+
+                        <Grid
+                            ColumnDefinitions="*,*,*"
+                            ColumnSpacing="12"
+                            Margin="0,8,0,0">
+                    <Button
+                        Grid.Column="0"
+                        x:Name="IncluirBtn"
+                        Text="Incluir"
+                        Clicked="OnIncluirClicked"
+                        SemanticProperties.Hint="Prepara uma nova unidade para cadastro" />
+                    <Button
+                        Grid.Column="1"
+                        x:Name="SalvarBtn"
+                        Text="Salvar"
+                        Clicked="OnSalvarClicked"
+                        SemanticProperties.Hint="Salva a unidade informada" />
+                    <Button
+                        Grid.Column="2"
+                        x:Name="CancelarBtn"
+                        Text="Cancelar"
+                        Clicked="OnCancelarClicked"
+                        SemanticProperties.Hint="Cancela a edição e limpa o formulário" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</ContentPage>

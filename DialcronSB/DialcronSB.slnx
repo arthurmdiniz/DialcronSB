@@ -1,3 +1,7 @@
 <Solution>
+  <Properties>
+    <Property Name="ActiveCfg" Value="Debug|net10.0-windows10.0.19041.0" />
+    <Property Name="Build.0" Value="Debug|net10.0-windows10.0.19041.0" />
+  </Properties>
   <Project Path="DialcronSB.csproj" />
 </Solution>

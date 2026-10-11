@@ -227,12 +227,19 @@ dotnet add package CommunityToolkit.Maui
 
 > `CommunityToolkit.Maui` esta fixado na **14.1.1**: a 15.x exige `Microsoft.Maui.Controls >= 10.0.90`, incompativel com o `MauiVersion 10.0.71` do projeto. O `UseMauiCommunityToolkit()` precisa estar no `MauiProgram.cs`.
 
-## Abrir no VS Code
+## Abrir no VS Code (com F5 + Hot Reload)
+
+As configuracoes de debug/hot reload ficam em `.vscode/` na **raiz do repositorio** (`.vscode/launch.json`, `tasks.json` e `settings.json`). Por isso, abra o VS Code na raiz:
 
 ```bash
-cd C:\Git\DialcronSB\DialcronSB
+cd C:\Git\DialcronSB
 code .
 ```
+
+- **F5** compila (`preLaunchTask`) e roda `DialcronSB/build/DialcronSB-Win-Debug.exe` (Debug consolidado)
+- **Hot Reload (C#)**: settings habilitam `csharp.experimental.debug.hotReload` + `hotReloadOnSave` — edicoes no code-behind aplicam ao salvar durante o debug
+- Se abrir a subpasta `DialcronSB` como workspace, o F5 nao enxerga `.vscode` e o hot reload nao funciona
+- XAML "ao vivo" (editar e ver na hora) e mais limitado no VS Code; o suporte pleno e no Visual Studio ou via `dotnet watch`
 
 ## Comandos Uteis
 
