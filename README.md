@@ -139,7 +139,7 @@ Ao abrir o app, o banco e validado automaticamente:
 - **Windows**: Verifica se `DialcronSBDB.db` existe ao lado do `.exe` (em `publish/`, quando publicado)
 - **Android**: Verifica se o banco existe em `FilesDir/DialcronAgendamentos/DialcronSBDB.db`
 
-Se o banco nao existir, ele e criado automaticamente a partir do seed, com as **10 tabelas** do schema (`cad_*` e `bel_*`). A tela de Backup exibe o caminho e tamanho do banco.
+Se o banco nao existir, ele e criado automaticamente a partir do seed, com as **9 tabelas** do schema (`cad_*` e `bel_*`). A tela de Backup exibe o caminho e tamanho do banco.
 
 ### Sincronizacao entre PCs
 
@@ -215,7 +215,6 @@ O numero de versao do APK e incrementado automaticamente a cada execucao do work
 
 | Tabela MySQL | Tabela SQLite | Descricao |
 |--------------|---------------|-----------|
-| cad_matriz | cad_matriz | Empresa dona (segmento BEL) |
 | cad_unidade | cad_unidade | Unidades/filiais |
 | cad_cliente | cad_cliente | Clientes |
 | cad_usuario | cad_usuario | Usuarios do sistema |
@@ -243,22 +242,11 @@ O numero de versao do APK e incrementado automaticamente a cada execucao do work
 
 ## Modelos de Dados (SQLite)
 
-### cad_matriz (Global)
-
-| Campo        | Tipo   | Descricao                    |
-|--------------|--------|------------------------------|
-| id_matriz    | int    | PK, auto-increment           |
-| nome         | text   | Nome da matriz/empresa       |
-| segmento     | text   | Segmento do negocio (BEL = salao) |
-| ativo        | text   | S = ativo, N = inativo       |
-| dta_criacao  | text   | Data de criacao              |
-
 ### cad_unidade (Global)
 
 | Campo         | Tipo   | Descricao                    |
 |---------------|--------|------------------------------|
 | id_unidade    | int    | PK, auto-increment           |
-| matriz        | int    | FK -> cad_matriz             |
 | nome_fantasia | text   | Nome fantasia                |
 | razao_social  | text   | Razao social                 |
 | cnpj          | text   | CNPJ                         |
@@ -389,7 +377,6 @@ O numero de versao do APK e incrementado automaticamente a cada execucao do work
 - O banco-padrao (seed) e versionado no git; o banco de trabalho pode ser sincronizado manualmente entre PCs via push/pull (nao e sincronizacao em tempo real)
 - A pasta `DocumentacaoPrivada/` e local (ignorada pelo `.gitignore`): use-a para arquivos pessoais/notas que nao devem ir para o repositorio remoto
 - Para multi-usuario/servidor, seria necessario adicionar uma API REST futuramente
-- A tabela `cad_matriz` registra o segmento do negocio (BEL = salao de beleza)
 - A tabela `bel_atendimento_servico` (pivoi) permite varios servicos por atendimento
 - Hierarquia: `cad_atendimento` (global, registro do agendamento) -> `bel_atendimento` (segmento, dados do atendimento no salao)
 - Para walk-in (sem agendamento), o sistema cria automaticamente uma cad_atendimento com dta_criacao = dta_atendimento

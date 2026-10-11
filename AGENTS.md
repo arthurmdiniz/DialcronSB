@@ -95,7 +95,7 @@ Definidos em `Database.BuildDbPath()`:
 
 ### Banco-Padrao (seed embutido)
 
-- O arquivo `DialcronSB/Resources/Raw/DialcronSB_PADRAO.db` e o banco vazio com as 10 tabelas (schema identico ao `Documentacao/DialcronSB.sql`)
+- O arquivo `DialcronSB/Resources/Raw/DialcronSB_PADRAO.db` e o banco vazio com as 9 tabelas (schema identico ao `Documentacao/DialcronSB.sql`)
 - Por estar em `Resources/Raw/**`, ele e embutido no pacote automaticamente pelo `MauiAsset` do `.csproj`
 - No primeiro uso, `CreateDatabaseAsync()` copia o seed do pacote (`FileSystem.OpenAppPackageFileAsync`) para `DbPath`
 - No Android o `.db` fica na pasta privada do app: sem permissao, invisivel no gerenciador de arquivos e apagado ao desinstalar. Inspecao via `adb shell run-as br.com.dialcron.salao ls files/DialcronAgendamentos/`
@@ -264,7 +264,6 @@ dotnet clean
 
 | MySQL            | SQLite          | Descricao                      |
 |------------------|-----------------|--------------------------------|
-| cad_matriz       | cad_matriz      | Empresa dona (segmento BEL)|
 | cad_unidade      | cad_unidade     | Unidades/filiais               |
 | cad_cliente      | cad_cliente     | Clientes                       |
 | cad_usuario      | cad_usuario     | Usuarios do sistema            |
@@ -319,11 +318,8 @@ Ao implementar este projeto, seguir esta ordem:
 
 ## Referencia de Modelos
 
-### cad_matriz (Global)
-- IdMatriz (int, PK), Nome (string), Segmento (string), Ativo (string), DtaCriacao (string)
-
 ### cad_unidade (Global)
-- IdUnidade (int, PK), Matriz (int, FK), NomeFantasia (string), RazaoSocial (string), Cnpj (string), InscEstadual (string), InscMunicipal (string), Cep (int?), Logradouro (string), Numero (int?), Bairro (string), Complemento (string), Municipio (string), Uf (string), Pais (string), Email (string), Ddd (int?), Telefone (int?), Cliente (int?, FK)
+- IdUnidade (int, PK), NomeFantasia (string), RazaoSocial (string), Cnpj (string), InscEstadual (string), InscMunicipal (string), Cep (int?), Logradouro (string), Numero (int?), Bairro (string), Complemento (string), Municipio (string), Uf (string), Pais (string), Email (string), Ddd (int?), Telefone (int?), Cliente (int?, FK)
 
 ### cad_cliente (Global)
 - IdCliente (int, PK), Nome (string), Logradouro (string), Numero (int?), CpfCnpj (string), DtaNascimento (string), DtaCriacao (string), DddTelefone (int?), Telefone (int?), DddCelular (int?), Celular (int?), Email (string), Sexo (string)
