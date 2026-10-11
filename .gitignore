@@ -10,6 +10,8 @@
 project.nuget.cache
 *.nuget.dgspec.json
 *.props.user
+*.proj.Backup.tmp
+*.SdkResolver.*.tmp
 
 # Visual Studio
 .vs/
@@ -54,3 +56,6 @@ Desktop.ini
 # NuGet
 **/[Pp]ackages/*
 !**/[Pp]ackages/build/
+
+# Local only (nao vai para o repositorio remoto)
+DocumentacaoPrivada/

@@ -16,6 +16,7 @@ Este repositorio reune os artefatos de levantamento, analise e garantia de quali
 | `Documentacao\Dialcron30SL.pdf` | Entregável documentação. |
 | `Documentacao\Dialcron30SLApresentacao.pdf` | Entregável apresentação. |
 | `Documentacao\CriacaoDeTelas.md` | Guia de desenvolvimento: passo a passo para criar telas (XAML + code-behind, rotas, navegacao, acesso ao banco via DAO) e convencoes de codigo. |
+| `Documentacao\PR-TEMPLATE.txt` | Modelo padrao de descricao de pull request (Resumo, Alteracoes, Testes, Observacoes), usado ao abrir um PR no GitHub. |
 
 
 ## Funcionalidades
@@ -108,7 +109,9 @@ Documentacao/                    # Artefatos de requisitos e documentacao
 ├── Dialcron30SL.pptx             # Apresentacao (pitch)
 ├── DialcronSB.sql            # Script de criacao do banco (SQLite)
 ├── DialcronMySQL.sql             # Banco original Dialcron3 (MySQL)
+├── PR-TEMPLATE.txt               # Modelo padrao de descricao de pull request
 └── TemplateUNA.pptx              # Template da apresentacao
+DocumentacaoPrivada/            # Arquivos locais (ignorados pelo git; nao vao para o repositorio)
 publish/                          # Publicacao standalone (Windows)
 └── DialcronSBDB.db           # Banco "fonte" versionado (sincronizado entre PCs)
 DialcronSB/
@@ -403,6 +406,7 @@ O numero de versao do APK e incrementado automaticamente a cada execucao do work
 ## Notas
 
 - O banco SQLite e criado automaticamente ao abrir o app (com confirmacao do usuario)
+- A pasta `DocumentacaoPrivada/` e local (ignorada pelo `.gitignore`): use-a para arquivos pessoais/notas que nao devem ir para o repositorio remoto
 - O banco e versionado no git e sincronizado manualmente entre PCs via push/pull (nao e sincronizacao em tempo real)
 - Para multi-usuario/servidor, seria necessario adicionar uma API REST futuramente
 - A tabela `cad_matriz` registra o segmento do negocio (BEL = salao de beleza)

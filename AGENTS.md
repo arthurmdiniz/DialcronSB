@@ -59,7 +59,9 @@ Documentacao/                     # Artefatos de requisitos e documentacao
 ├── Dialcron30SL.pptx             # Apresentacao (pitch)
 ├── DialcronSB.sql            # Script de criacao do banco (SQLite)
 ├── DialcronMySQL.sql             # Banco original Dialcron3 (MySQL)
+├── PR-TEMPLATE.txt               # Modelo padrao de descricao de pull request
 └── TemplateUNA.pptx              # Template da apresentacao
+DocumentacaoPrivada/             # Arquivos locais (ignorados pelo git; nao vao para o repositorio remoto)
 publish/                          # Publicacao standalone (Windows)
 └── DialcronSBDB.db           # Banco "fonte" versionado (sincronizado entre PCs)
 DialcronSB/
@@ -327,6 +329,7 @@ Ao implementar este projeto, seguir esta ordem:
 - NAO criar arquivos duplicados
 - NAO alterar a estrutura de pastas sem necessidade
 - NAO versar chaves, senhas ou dados sensiveis
+- Arquivos locais/pessoais (notas, textos de PR, rascunhos) vao em `DocumentacaoPrivada/`, que e ignorada pelo git e nao vai para o repositorio remoto
 - NAO usar `Navigation.PushAsync` sem tratar erro de navegacao
 - NAO adicionar dependencias extras sem necessidade
 - Manter consistencia com o padrao DAO existente
