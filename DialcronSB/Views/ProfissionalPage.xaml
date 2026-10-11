@@ -4,20 +4,118 @@
              x:Class="DialcronSB.Views.ProfissionalPage"
              Title="Profissionais">
 
-    <VerticalStackLayout
-        Padding="30,0"
-        Spacing="15"
-        VerticalOptions="Center">
+    <Grid
+        Padding="24"
+        ColumnDefinitions="*,*"
+        ColumnSpacing="24"
+        RowDefinitions="Auto,*"
+        RowSpacing="16">
 
         <Label
+            Grid.Row="0"
+            Grid.ColumnSpan="2"
             Text="Profissionais"
             Style="{StaticResource Headline}"
             SemanticProperties.HeadingLevel="Level1" />
 
-        <Label
-            Text="Tela em construção"
-            Style="{StaticResource SubHeadline}" />
+        <Border
+            Grid.Row="1"
+            Grid.Column="0"
+            Padding="16"
+            BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource DarkSurface}}">
+            <Grid RowDefinitions="Auto,Auto,*" RowSpacing="12">
+                <Label
+                    Text="Lista"
+                    Style="{StaticResource SubHeadline}"
+                    HorizontalOptions="Start"
+                    HorizontalTextAlignment="Start"
+                    SemanticProperties.HeadingLevel="Level2" />
 
-    </VerticalStackLayout>
+                <Grid
+                    Grid.Row="1"
+                    ColumnDefinitions="60,*"
+                    Padding="0,4">
+                    <Label Text="ID" FontAttributes="Bold" />
+                    <Label Grid.Column="1" Text="Nome" FontAttributes="Bold" />
+                </Grid>
+
+                <CollectionView
+                    x:Name="ProfissionaisCollection"
+                    Grid.Row="2"
+                    SelectionMode="Single"
+                    SelectionChanged="OnSelecaoChanged"
+                    EmptyView="Nenhum profissional cadastrado">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnDefinitions="60,*" Padding="0,8">
+                                <Label Text="{Binding Id}" />
+                                <Label Grid.Column="1" Text="{Binding Nome}" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+        </Border>
+
+        <Border
+            Grid.Row="1"
+            Grid.Column="1"
+            Padding="16"
+            BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource DarkSurface}}">
+            <VerticalStackLayout Spacing="16">
+                <Label
+                    Text="Dados do profissional"
+                    Style="{StaticResource SubHeadline}"
+                    HorizontalOptions="Start"
+                    HorizontalTextAlignment="Start"
+                    SemanticProperties.HeadingLevel="Level2" />
+
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Nome" />
+                    <Entry
+                        x:Name="NomeEntry"
+                        Placeholder="Nome do profissional" />
+                </VerticalStackLayout>
+
+                <HorizontalStackLayout Spacing="12">
+                    <Label
+                        Text="Ativo"
+                        VerticalOptions="Center" />
+                    <Switch
+                        x:Name="AtivoSwitch"
+                        IsToggled="True"
+                        Toggled="OnAtivoToggled" />
+                    <Label
+                        x:Name="AtivoStatusLabel"
+                        Text="Ativo"
+                        VerticalOptions="Center" />
+                </HorizontalStackLayout>
+
+                <Grid
+                    ColumnDefinitions="*,*,*"
+                    ColumnSpacing="12"
+                    Margin="0,8,0,0">
+                    <Button
+                        Grid.Column="0"
+                        x:Name="IncluirBtn"
+                        Text="Incluir"
+                        Clicked="OnIncluirClicked"
+                        SemanticProperties.Hint="Prepara um novo profissional para cadastro" />
+                    <Button
+                        Grid.Column="1"
+                        x:Name="SalvarBtn"
+                        Text="Salvar"
+                        Clicked="OnSalvarClicked"
+                        SemanticProperties.Hint="Salva o profissional informado" />
+                    <Button
+                        Grid.Column="2"
+                        x:Name="CancelarBtn"
+                        Text="Cancelar"
+                        Clicked="OnCancelarClicked"
+                        SemanticProperties.Hint="Cancela a edição e limpa o formulário" />
+                </Grid>
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
 
 </ContentPage>

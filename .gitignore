@@ -10,6 +10,7 @@
 project.nuget.cache
 *.nuget.dgspec.json
 *.props.user
+*.proj.Backup.tmp
 
 # Visual Studio
 .vs/
