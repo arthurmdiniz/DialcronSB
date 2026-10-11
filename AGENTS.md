@@ -53,49 +53,33 @@
 .github/
 └── workflows/
     └── build.yml                 # CI/CD: compila Windows + Android
-.gitignore                        # Ignora build outputs; versiona o banco em publish/
+.gitignore                        # Ignora build outputs; permite versionar DialcronSB/build/DialcronSBDB.db e o seed
 Documentacao/                     # Artefatos de requisitos e documentacao
+├── SalaoDiagrama.drawio          # Diagrama de classes (editavel)
+├── SalaoDiagrama-Classe.drawio.png # Diagrama de classes (exportado)
+├── SalaoDiagrama-DER.drawio.png  # Diagrama DER (exportado)
 ├── Dialcron30SL.docx             # Documento de Especificacao de Software
 ├── Dialcron30SL.pptx             # Apresentacao (pitch)
-├── DialcronSB.sql            # Script de criacao do banco (SQLite)
+├── DialcronSB.sql                # Script de criacao do banco (SQLite)
 ├── DialcronMySQL.sql             # Banco original Dialcron3 (MySQL)
+├── CriacaoDeTelas.md             # Guia de criacao de telas
+├── Paleta.txt                    # Paleta de cores
 ├── PR-TEMPLATE.txt               # Modelo padrao de descricao de pull request
 └── TemplateUNA.pptx              # Template da apresentacao
 DocumentacaoPrivada/             # Arquivos locais (ignorados pelo git; nao vao para o repositorio remoto)
-publish/                          # Publicacao standalone (Windows)
-└── DialcronSBDB.db           # Banco "fonte" versionado (sincronizado entre PCs)
 DialcronSB/
-├── publish.ps1                   # Script de publicacao standalone
-├── Diagrama/
-│   ├── SalaoDiagrama.drawio      # Diagrama de classes (editavel)
-│   └── SalaoDiagrama.drawio.png  # Diagrama de classes (exportado)
-├── Models/
-│   ├── Matriz.cs                 # Modelo de matriz
-│   ├── Unidade.cs                # Modelo de unidade
-│   ├── Cliente.cs                # Modelo de cliente
-│   ├── Usuario.cs                # Modelo de usuario
-│   ├── Servico.cs                # Modelo de servico
-│   ├── Profissional.cs           # Modelo de profissional
-│   ├── Atendimento.cs            # Modelo de atendimento (global)
-│   ├── BelAtendimento.cs         # Modelo de atendimento (salao)
-│   ├── AtendimentoServico.cs     # Modelo pivoi N:N
-│   └── TipoAtendimento.cs        # Tipo de atendimento (salao)
+├── Directory.Build.props         # Saida em build/, exe DialcronSB-Win-<Config> e publish standalone em release/
+├── DialcronSB-Release.lnk        # Atalho para DialcronSB/build/DialcronSB-Win-Release.exe
+├── build/                        # Saida de compilacao (gerada; nao versionada)
+├── release/                      # Executavel standalone single-file (gerada; nao versionada)
+├── Resources/Raw/
+│   └── DialcronSB_PADRAO.db      # Banco-padrao (seed), versionado e embutido no app
+├── Models/                       # Modelos do dominio (a implementar)
 ├── Data/
 │   ├── Database.cs               # Singleton + caminhos platform-specific
 │   └── DAO/
-│       ├── MatrizDAO.cs          # CRUD de matrizes
-│       ├── UnidadeDAO.cs         # CRUD de unidades
-│       ├── ClienteDAO.cs         # CRUD de clientes
-│       ├── UsuarioDAO.cs         # CRUD de usuarios
-│       ├── ServicoDAO.cs         # CRUD de servicos
-│       ├── ProfissionalDAO.cs    # CRUD de profissionais
-│       ├── AtendimentoDAO.cs     # CRUD de atendimentos (global)
-│       ├── BelAtendimentoDAO.cs  # CRUD de atendimentos (salao)
-│   ├── AtendimentoServicoDAO.cs # CRUD pivoi N:N
-│   ├── TipoAtendimentoDAO.cs # CRUD tipos de atendimento (salao)
-│   ├── BackupDAO.cs           # Gera copia consistente do banco (VACUUM INTO)
-│   └── RelatorioDAO.cs      # Queries (previsto para 2a fase: relatorios financeiros)
-├── Views/                        # Pages XAML + code-behind (a implementar)
+│       └── BackupDAO.cs          # Copia consistente do banco (VACUUM INTO)
+├── Views/                        # Pages XAML + code-behind
 ├── MainPage.xaml                 # Tela inicial + Backup (Salvar no Windows / Compartilhar no Android)
 ├── App.xaml.cs                   # Validacao de banco na inicializacao
 ├── AppShell.xaml                 # Shell de navegacao
@@ -108,13 +92,13 @@ DialcronSB/
 
 Definidos em `Database.BuildDbPath()`:
 
-- **Windows**: `AppDomain.CurrentDomain.BaseDirectory` (ao lado do .exe, sem subpasta)
+- **Windows**: `AppDomain.CurrentDomain.BaseDirectory` (ao lado do .exe, sem subpasta; com a saida consolidada, fica em `DialcronSB/build/` ou `DialcronSB/release/`)
 - **Android**: `FileSystem.AppDataDirectory` + `DialcronAgendamentos` (= `FilesDir/DialcronAgendamentos/DialcronSBDB.db`)
 - O `ApplicationId` e `br.com.dialcron.salao`; trocar o pacote exige desinstalar o app anterior
 
 ### Banco-Padrao (seed embutido)
 
-- O arquivo `DialcronSB/Resources/Raw/DialcronSB_PADRAO.db` e o banco vazio com as 10 tabelas (schema identico ao `Documentacao/DialcronSB.sql`)
+- O arquivo `DialcronSB/Resources/Raw/DialcronSB_PADRAO.db` e o banco vazio com as 9 tabelas (schema identico ao `Documentacao/DialcronSB.sql`)
 - Por estar em `Resources/Raw/**`, ele e embutido no pacote automaticamente pelo `MauiAsset` do `.csproj`
 - No primeiro uso, `CreateDatabaseAsync()` copia o seed do pacote (`FileSystem.OpenAppPackageFileAsync`) para `DbPath`
 - No Android o `.db` fica na pasta privada do app: sem permissao, invisivel no gerenciador de arquivos e apagado ao desinstalar. Inspecao via `adb shell run-as br.com.dialcron.salao ls files/DialcronAgendamentos/`
@@ -141,11 +125,11 @@ MainPage aparece
 
 ### Banco Versionado (sincronizacao entre PCs)
 
-- O `publish/DialcronSBDB.db` e versionado no git e funciona como "banco fonte" (nao ha banco na raiz)
-- Apos cada `dotnet publish`, o banco permanece em `publish/DialcronSBDB.db` (ao lado do `.exe`); o target `CopySeedDatabase` apenas remove o `.pdb` de debug
-- O `.gitignore` permite versionar `publish/*.db` e `DialcronSB/Resources/Raw/*.db` (seed), ignorando os demais `*.db`
+- O seed `DialcronSB/Resources/Raw/DialcronSB_PADRAO.db` e versionado no git e serve de base para novos bancos
+- O banco de trabalho `DialcronSB/build/DialcronSBDB.db` e criado no primeiro uso (ao lado do `.exe`); o `.gitignore` permite versiona-lo, mas a pasta `build/` e gerada sob demanda e normalmente nao contem o banco no repositorio
+- O target `CopySeedDatabase` (pos-publish) apenas remove o `.pdb` de debug; nao copia banco
+- O `.gitignore` permite versionar `DialcronSB/build/DialcronSBDB.db` e `DialcronSB/Resources/Raw/*.db` (seed), ignorando os demais `*.db`
 - A sincronizacao vale **apenas entre PCs**; no Android o banco vive no aparelho (use Backup/Restore para levar dados entre dispositivos)
-- Fluxo entre varios PCs: rodar o app -> o banco e criado/atualizado em `publish/` -> commitar o `publish/DialcronSBDB.db` atualizado -> atualizar nos demais PCs
 - Cuidado: por ser binario, editar o banco em varios PCs ao mesmo tempo gera conflito de merge (sincronizar um PC por vez)
 
 ## Backup do Banco
@@ -159,29 +143,27 @@ MainPage aparece
 
 ## Publicacao Standalone
 
-### Configuracao (.csproj)
+### Configuracao (Directory.Build.props)
 
-- `SelfContained=true` no .csproj (runtime embutido)
+- `SelfContained=true` (runtime embutido)
 - `PublishTrimmed=false` (sem trimming para MAUI)
-- `WindowsPackageType=None` (app desempacotado)
+- `WindowsPackageType=None` no `.csproj` (app desempacotado)
 - `PublishSingleFile=true` (Windows) - empacota runtime + app em um unico `.exe`
 - `IncludeNativeLibrariesForSelfExtract=true` + `IncludeAllContentForSelfExtract=true` (extraem dlls nativas/UWP em runtime)
-- Resultado: a pasta `publish/` fica com apenas **2 arquivos**: `DialcronSB.exe` (~250 MB) e `DialcronSBDB.db`
+- `OutputPath` = `DialcronSB/build/` (saida de build consolidada, sem subpastas no Windows) e `AssemblyName` = `DialcronSB-Win-$(Configuration)`
+- `PublishDir` = `DialcronSB/release/` - Resultado: o `release/` fica apenas com `DialcronSB-Win-Release.exe` (~250 MB); o `DialcronSBDB.db` e criado ao lado dele no primeiro uso
 
 ### Alvo MSBuild `CopySeedDatabase` (apos Publish)
 
-- O banco ja reside em `publish/` (versionado); o target nao copia banco da raiz
+- O target nao copia banco: o `DialcronSBDB.db` e criado no primeiro uso do app, nao na publicacao
 - Remove o `DialcronSB.pdb` (symbols de debug) da saida de publicacao
 - So roda no Windows (nao interfere no build Android/CI)
 
 ### Comandos
 
 ```bash
-# Publicar (gera a pasta publish/ na RAIZ do repo, com exe + banco)
-dotnet publish -f net10.0-windows10.0.19041.0 -c Release -o publish
-
-# Ou usar o script
-.\publish.ps1
+# Publicar (gera DialcronSB/release/DialcronSB-Win-Release.exe; banco criado no 1o uso)
+dotnet publish -c Release -f net10.0-windows10.0.19041.0
 ```
 
 > Nota: publique SEM `-r win-x64` explicito. O MAUI Windows usa o runtime CoreCLR por padrao; forcar `-r win-x64` tenta baixar o runtime Mono e falha (NU1102).
@@ -258,14 +240,14 @@ code .
 # Restaurar pacotes
 dotnet restore
 
-# Compilar (Debug)
+# Compilar (Debug) - gera DialcronSB/build/DialcronSB-Win-Debug.exe
 dotnet build -f net10.0-windows10.0.19041.0
 
 # Rodar no Windows (Debug)
 dotnet run -f net10.0-windows10.0.19041.0
 
-# Publicar standalone (Release) - gera publish/ na raiz com exe + banco
-dotnet publish -f net10.0-windows10.0.19041.0 -c Release -o publish
+# Publicar standalone (Release) - gera DialcronSB/release/DialcronSB-Win-Release.exe; banco criado no 1o uso
+dotnet publish -c Release -f net10.0-windows10.0.19041.0
 
 # Rodar no Android
 dotnet run -f net10.0-android
@@ -283,7 +265,6 @@ dotnet clean
 
 | MySQL            | SQLite          | Descricao                      |
 |------------------|-----------------|--------------------------------|
-| cad_matriz       | cad_matriz      | Empresa dona (segmento BEL)|
 | cad_unidade      | cad_unidade     | Unidades/filiais               |
 | cad_cliente      | cad_cliente     | Clientes                       |
 | cad_usuario      | cad_usuario     | Usuarios do sistema            |
@@ -314,9 +295,9 @@ dotnet clean
 Ao implementar este projeto, seguir esta ordem:
 
 1. Criar projeto MAUI + instalar NuGets
-2. Criar Models (com atributos sqlite-net-pcl) - FEITO
+2. Criar Models (com atributos sqlite-net-pcl) - A IMPLEMENTAR
 3. Criar Database.cs (singleton + caminhos platform-specific) - FEITO
-4. Criar DAOs (CRUD por entidade) - FEITO
+4. Criar DAOs (CRUD por entidade) - A IMPLEMENTAR (apenas BackupDAO existe)
 5. Configurar MauiProgram.cs (DI) - FEITO
 6. Configurar validacao de banco na inicializacao - FEITO
 7. Configurar publicacao standalone - FEITO
@@ -338,11 +319,8 @@ Ao implementar este projeto, seguir esta ordem:
 
 ## Referencia de Modelos
 
-### cad_matriz (Global)
-- IdMatriz (int, PK), Nome (string), Segmento (string), Ativo (string), DtaCriacao (string)
-
 ### cad_unidade (Global)
-- IdUnidade (int, PK), Matriz (int, FK), NomeFantasia (string), RazaoSocial (string), Cnpj (string), InscEstadual (string), InscMunicipal (string), Cep (int?), Logradouro (string), Numero (int?), Bairro (string), Complemento (string), Municipio (string), Uf (string), Pais (string), Email (string), Ddd (int?), Telefone (int?), Cliente (int?, FK)
+- IdUnidade (int, PK), NomeFantasia (string), RazaoSocial (string), Cnpj (string), InscEstadual (string), InscMunicipal (string), Cep (int?), Logradouro (string), Numero (int?), Bairro (string), Complemento (string), Municipio (string), Uf (string), Pais (string), Email (string), Ddd (int?), Telefone (int?), Cliente (int?, FK)
 
 ### cad_cliente (Global)
 - IdCliente (int, PK), Nome (string), Logradouro (string), Numero (int?), CpfCnpj (string), DtaNascimento (string), DtaCriacao (string), DddTelefone (int?), Telefone (int?), DddCelular (int?), Celular (int?), Email (string), Sexo (string)

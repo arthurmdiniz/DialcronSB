@@ -1,0 +1,21 @@
+<Project>
+
+  <!-- Saida de build consolidada em DialcronSB\build\ (todos os alvos) -->
+  <PropertyGroup>
+    <OutputPath>$(MSBuildThisFileDirectory)build\</OutputPath>
+  </PropertyGroup>
+
+  <!-- Windows: exe DialcronSB-Win-<Config>, sem subpastas, publish standalone em DialcronSB\release\ -->
+  <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
+    <AssemblyName>DialcronSB-Win-$(Configuration)</AssemblyName>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <SelfContained>true</SelfContained>
+    <PublishTrimmed>false</PublishTrimmed>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <PublishDir>$(MSBuildThisFileDirectory)release\</PublishDir>
+  </PropertyGroup>
+
+</Project>

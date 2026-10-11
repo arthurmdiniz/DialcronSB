@@ -12,7 +12,7 @@ Este repositorio reune os artefatos de levantamento, analise e garantia de quali
 | `Documentacao\Dialcron30SL.pptx` | Apresentacao executiva e tecnica (pitch para stakeholders). Resume o problema e escopo, requisitos, arquitetura, pipeline de desenvolvimento e resultados esperado do projeto. |
 | `Documentacao\DialcronSB.sql` | Script de criacao do banco (SQLite) que materializa a modelagem de dados descrita no documento de especificacao. |
 | `Documentacao\DialcronMySQL.sql` | Script original do banco Dialcron3 (MySQL), fonte do mapeamento para o SQLite. |
-| `Documentacao\Diagrama\SalaoDiagrama.drawio` | Diagrama de classes e EDR (editavel em draw.io) com as entidades do dominio, atributos, metodos e cardinalidades dos relacionamentos (ex.: 1:0..N). Serve de base para a secao 3.4 do documento Word. |
+| `Documentacao\SalaoDiagrama.drawio` | Diagrama de classes e EDR (editavel em draw.io) com as entidades do dominio, atributos, metodos e cardinalidades dos relacionamentos (ex.: 1:0..N). Serve de base para a secao 3.4 do documento Word. |
 | `Documentacao\Dialcron30SL.pdf` | Entregável documentação. |
 | `Documentacao\Dialcron30SLApresentacao.pdf` | Entregável apresentação. |
 | `Documentacao\CriacaoDeTelas.md` | Guia de desenvolvimento: passo a passo para criar telas (XAML + code-behind, rotas, navegacao, acesso ao banco via DAO) e convencoes de codigo. |
@@ -102,46 +102,31 @@ code .
 
 ```
 Documentacao/                    # Artefatos de requisitos e documentacao
-├── Diagrama/
-│   ├── SalaoDiagrama.drawio      # Diagrama de classes (editavel)
-│   └── SalaoDiagrama.drawio.png  # Diagrama de classes (exportado)
+├── SalaoDiagrama.drawio          # Diagrama de classes (editavel)
+├── SalaoDiagrama-Classe.drawio.png # Diagrama de classes (exportado)
+├── SalaoDiagrama-DER.drawio.png  # Diagrama DER (exportado)
 ├── Dialcron30SL.docx             # Documento de Especificacao de Software
 ├── Dialcron30SL.pptx             # Apresentacao (pitch)
-├── DialcronSB.sql            # Script de criacao do banco (SQLite)
+├── DialcronSB.sql                # Script de criacao do banco (SQLite)
 ├── DialcronMySQL.sql             # Banco original Dialcron3 (MySQL)
+├── CriacaoDeTelas.md             # Guia de criacao de telas
+├── Paleta.txt                    # Paleta de cores
 ├── PR-TEMPLATE.txt               # Modelo padrao de descricao de pull request
 └── TemplateUNA.pptx              # Template da apresentacao
 DocumentacaoPrivada/            # Arquivos locais (ignorados pelo git; nao vao para o repositorio)
-publish/                          # Publicacao standalone (Windows)
-└── DialcronSBDB.db           # Banco "fonte" versionado (sincronizado entre PCs)
 DialcronSB/
-├── publish.ps1                   # Script de publicacao standalone
-├── Models/
-│   ├── Matriz.cs                 # Modelo de matriz
-│   ├── Unidade.cs                # Modelo de unidade
-│   ├── Cliente.cs                # Modelo de cliente
-│   ├── Usuario.cs                # Modelo de usuario
-│   ├── Servico.cs                # Modelo de servico
-│   ├── Profissional.cs           # Modelo de profissional
-│   ├── Atendimento.cs            # Modelo de atendimento (global)
-│   ├── BelAtendimento.cs         # Modelo de atendimento (salao)
-│   ├── AtendimentoServico.cs     # Modelo pivoi N:N
-│   └── TipoAtendimento.cs        # Tipo de atendimento (salao)
+├── Directory.Build.props         # Saida em build/, exe DialcronSB-Win-<Config> e publish standalone em release/
+├── DialcronSB-Release.lnk        # Atalho para DialcronSB/build/DialcronSB-Win-Release.exe
+├── build/                        # Saida de compilacao (gerada; nao versionada)
+├── release/                      # Executavel standalone single-file (gerada; nao versionada)
+├── Resources/Raw/
+│   └── DialcronSB_PADRAO.db      # Banco-padrao (seed) embutido no app
+├── Models/                       # Modelos do dominio (a implementar)
 ├── Data/
 │   ├── Database.cs               # Singleton + caminhos platform-specific
 │   └── DAO/
-│       ├── MatrizDAO.cs          # CRUD de matrizes
-│       ├── UnidadeDAO.cs         # CRUD de unidades
-│       ├── ClienteDAO.cs         # CRUD de clientes
-│       ├── UsuarioDAO.cs         # CRUD de usuarios
-│       ├── ServicoDAO.cs         # CRUD de servicos
-│       ├── ProfissionalDAO.cs    # CRUD de profissionais
-│       ├── AtendimentoDAO.cs     # CRUD de atendimentos (global)
-│       ├── BelAtendimentoDAO.cs  # CRUD de atendimentos (salao)
-│       ├── AtendimentoServicoDAO.cs # CRUD pivoi N:N
-│       ├── TipoAtendimentoDAO.cs # CRUD tipos de atendimento (salao)
-│       └── RelatorioDAO.cs      # Queries (previsto para 2a fase: relatorios financeiros)
-├── Views/                        # Pages XAML + code-behind (inclui MainPage)
+│       └── BackupDAO.cs          # Copia consistente do banco (VACUUM INTO)
+├── Views/                        # Pages XAML + code-behind
 ├── MainPage.xaml                 # Tela de Backup/Restore
 ├── App.xaml.cs                   # Validacao de banco na inicializacao
 ├── AppShell.xaml                 # Shell de navegacao
@@ -150,20 +135,18 @@ DialcronSB/
 
 ## Inicializacao do Banco de Dados
 
-O banco `publish/DialcronSBDB.db` e versionado no git, permitindo sincronizar os dados entre varios PCs (basta clonar/atualizar o repo para ter o banco mais recente ao lado do executavel).
+O banco de trabalho `DialcronSBDB.db` e criado no primeiro uso do app, copiando o banco-padrao (seed) `Resources/Raw/DialcronSB_PADRAO.db`, que esta embutido no pacote e versionado no git.
 
 Ao abrir o app, o banco e validado automaticamente:
 
-- **Windows**: Verifica se `DialcronSBDB.db` existe ao lado do `.exe` (na pasta `publish/`)
+- **Windows**: Verifica se `DialcronSBDB.db` existe ao lado do `.exe` (em `DialcronSB/build/`; ou `DialcronSB/release/` quando publicado)
 - **Android**: Verifica se o banco existe em `FilesDir/DialcronAgendamentos/DialcronSBDB.db`
 
-Se o banco nao existir, ele e criado automaticamente com todas as 12 tabelas. A tela de Backup/Restore exibe o caminho e tamanho do banco.
+Se o banco nao existir, ele e criado automaticamente a partir do seed, com as **9 tabelas** do schema (`cad_*` e `bel_*`). A tela de Backup exibe o caminho e tamanho do banco.
 
 ### Sincronizacao entre PCs
 
-1. Rode o app num PC (o banco e gerado/atualizado em `publish/DialcronSBDB.db`)
-2. Commite o `publish/DialcronSBDB.db` atualizado (nao ha mais banco na raiz)
-3. Nos demais PCs, atualize o repo e rode o app - o banco mais recente ja estara la
+O seed `Resources/Raw/DialcronSB_PADRAO.db` e versionado e serve de base para novos bancos. O banco de trabalho `DialcronSBDB.db` tambem pode ser versionado em `DialcronSB/build/` (o `.gitignore` o permite), mas a pasta `build/` e gerada sob demanda pela compilacao e normalmente nao contem o banco no repositorio.
 
 > Cuidado: por ser um arquivo binario, editar o banco em varios PCs ao mesmo tempo gera conflito de merge no git. Sincronize um PC por vez.
 
@@ -171,12 +154,17 @@ Se o banco nao existir, ele e criado automaticamente com todas as 12 tabelas. A 
 
 ### Windows
 
+A saida de build e consolidada na pasta `DialcronSB/build/` pelo `Directory.Build.props`, e o executavel recebe o sufixo de configuracao: `DialcronSB-Win-Debug.exe` ou `DialcronSB-Win-Release.exe`.
+
 ```bash
-# Compilar para Windows (Debug)
+# Compilar para Windows (Debug) - gera DialcronSB/build/DialcronSB-Win-Debug.exe
 dotnet build -f net10.0-windows10.0.19041.0
 
+# Compilar para Windows (Release) - gera DialcronSB/build/DialcronSB-Win-Release.exe
+dotnet build -c Release -f net10.0-windows10.0.19041.0
+
 # Rodar no Windows
-dotnet run -f net10.0-windows10.0.19041.0
+dotnet run -c Release -f net10.0-windows10.0.19041.0
 ```
 
 ### Android
@@ -194,17 +182,16 @@ dotnet publish -f net10.0-android -c Release
 
 ### Publicacao Standalone (Windows)
 
-Gera um unico executavel com o runtime .NET embutido (sem precisar instalar o .NET na maquina). A saida e a pasta `publish/` (na raiz do repo), onde tambem reside o banco de dados:
+Gera um unico executavel com o runtime .NET embutido (sem precisar instalar o .NET na maquina). A saida e a pasta `DialcronSB/release/`, onde o app cria/usa o banco de trabalho na primeira execucao:
 
-- `DialcronSB.exe` (~250 MB) - app + runtime embutidos num unico exe (single-file)
-- `DialcronSBDB.db` - banco de dados (versionado, já residente em `publish/`)
+- `DialcronSB-Win-Release.exe` (~250 MB) - app + runtime embutidos num unico exe (single-file)
+- `DialcronSBDB.db` - banco de trabalho, criado automaticamente na primeira execucao (a partir do seed embutido)
+
+As propriedades de publicacao standalone (`SelfContained`, `PublishSingleFile`, `PublishTrimmed=false` e a pasta `DialcronSB/release/`) ficam no `Directory.Build.props`.
 
 ```bash
-# Usar o script
-.\publish.ps1
-
-# Ou manualmente
-dotnet publish -f net10.0-windows10.0.19041.0 -c Release -o publish
+# Publicar (gera DialcronSB/release/DialcronSB-Win-Release.exe)
+dotnet publish -c Release -f net10.0-windows10.0.19041.0
 ```
 
 > Obs: publique SEM `-r win-x64` explicito (evita erro NU1102 ao tentar baixar o runtime Mono).
@@ -235,7 +222,6 @@ O numero de versao do APK e incrementado automaticamente a cada execucao do work
 
 | Tabela MySQL | Tabela SQLite | Descricao |
 |--------------|---------------|-----------|
-| cad_matriz | cad_matriz | Empresa dona (segmento BEL) |
 | cad_unidade | cad_unidade | Unidades/filiais |
 | cad_cliente | cad_cliente | Clientes |
 | cad_usuario | cad_usuario | Usuarios do sistema |
@@ -263,22 +249,11 @@ O numero de versao do APK e incrementado automaticamente a cada execucao do work
 
 ## Modelos de Dados (SQLite)
 
-### cad_matriz (Global)
-
-| Campo        | Tipo   | Descricao                    |
-|--------------|--------|------------------------------|
-| id_matriz    | int    | PK, auto-increment           |
-| nome         | text   | Nome da matriz/empresa       |
-| segmento     | text   | Segmento do negocio (BEL = salao) |
-| ativo        | text   | S = ativo, N = inativo       |
-| dta_criacao  | text   | Data de criacao              |
-
 ### cad_unidade (Global)
 
 | Campo         | Tipo   | Descricao                    |
 |---------------|--------|------------------------------|
 | id_unidade    | int    | PK, auto-increment           |
-| matriz        | int    | FK -> cad_matriz             |
 | nome_fantasia | text   | Nome fantasia                |
 | razao_social  | text   | Razao social                 |
 | cnpj          | text   | CNPJ                         |
@@ -405,11 +380,10 @@ O numero de versao do APK e incrementado automaticamente a cada execucao do work
 
 ## Notas
 
-- O banco SQLite e criado automaticamente ao abrir o app (com confirmacao do usuario)
+- O banco SQLite e criado automaticamente ao abrir o app, a partir do seed embutido (`DialcronSB_PADRAO.db`)
+- O banco-padrao (seed) e versionado no git; o banco de trabalho pode ser sincronizado manualmente entre PCs via push/pull (nao e sincronizacao em tempo real)
 - A pasta `DocumentacaoPrivada/` e local (ignorada pelo `.gitignore`): use-a para arquivos pessoais/notas que nao devem ir para o repositorio remoto
-- O banco e versionado no git e sincronizado manualmente entre PCs via push/pull (nao e sincronizacao em tempo real)
 - Para multi-usuario/servidor, seria necessario adicionar uma API REST futuramente
-- A tabela `cad_matriz` registra o segmento do negocio (BEL = salao de beleza)
 - A tabela `bel_atendimento_servico` (pivoi) permite varios servicos por atendimento
 - Hierarquia: `cad_atendimento` (global, registro do agendamento) -> `bel_atendimento` (segmento, dados do atendimento no salao)
 - Para walk-in (sem agendamento), o sistema cria automaticamente uma cad_atendimento com dta_criacao = dta_atendimento

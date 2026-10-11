@@ -9,19 +9,9 @@ PRAGMA foreign_keys = ON;
 -- TABELAS GLOBAIS (compartilhadas entre segmentos)
 -- ============================================
 
--- Matriz (empresa dona)
-CREATE TABLE IF NOT EXISTS cad_matriz (
-    id_matriz    INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome         TEXT NOT NULL,
-    segmento     TEXT,              -- segmento do negocio (BEL = salao)
-    ativo        TEXT NOT NULL DEFAULT 'S',
-    dta_criacao  TEXT DEFAULT (date('now'))
-);
-
 -- Unidade (filial/estabelecimento)
 CREATE TABLE IF NOT EXISTS cad_unidade (
     id_unidade      INTEGER PRIMARY KEY AUTOINCREMENT,
-    matriz          INTEGER NOT NULL,
     nome_fantasia   TEXT,
     razao_social    TEXT,
     cnpj            TEXT,
@@ -39,7 +29,6 @@ CREATE TABLE IF NOT EXISTS cad_unidade (
     ddd             INTEGER,
     telefone        INTEGER,
     cliente         INTEGER,
-    FOREIGN KEY (matriz) REFERENCES cad_matriz(id_matriz),
     FOREIGN KEY (cliente) REFERENCES cad_cliente(cliente)
 );
 
@@ -170,6 +159,5 @@ CREATE INDEX IF NOT EXISTS idx_bel_atendimento_dta ON bel_atendimento(dta_atendi
 CREATE INDEX IF NOT EXISTS idx_bel_servico_unidade ON bel_servico(unidade);
 CREATE INDEX IF NOT EXISTS idx_bel_profissional_unidade ON bel_profissional(unidade);
 CREATE INDEX IF NOT EXISTS idx_bel_atendimento_servico_atendimento ON bel_atendimento_servico(atendimento);
-CREATE INDEX IF NOT EXISTS idx_cad_unidade_matriz ON cad_unidade(matriz);
 CREATE INDEX IF NOT EXISTS idx_cad_unidade_cliente ON cad_unidade(cliente);
 CREATE INDEX IF NOT EXISTS idx_bel_tipo_atendimento_unidade ON bel_tipo_atendimento(unidade);
