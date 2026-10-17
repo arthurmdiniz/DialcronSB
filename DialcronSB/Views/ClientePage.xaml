@@ -4,20 +4,146 @@
              x:Class="DialcronSB.Views.ClientePage"
              Title="Clientes">
 
-    <VerticalStackLayout
-        Padding="30,0"
-        Spacing="15"
-        VerticalOptions="Center">
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="16">
 
-        <Label
-            Text="Clientes"
-            Style="{StaticResource Headline}"
-            SemanticProperties.HeadingLevel="Level1" />
+            <Label
+                Text="Cadastro de Clientes"
+                Style="{StaticResource Headline}"
+                SemanticProperties.HeadingLevel="Level1" />
 
-        <Label
-            Text="Tela em construção"
-            Style="{StaticResource SubHeadline}" />
+            <Border
+                Padding="16"
+                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource DarkSurface}}">
+                <VerticalStackLayout Spacing="12">
+                    <Label
+                        Text="Lista"
+                        Style="{StaticResource SubHeadline}"
+                        SemanticProperties.HeadingLevel="Level2" />
 
-    </VerticalStackLayout>
+                    <SearchBar
+                        x:Name="BuscaBar"
+                        Placeholder="Buscar por nome ou CPF/CNPJ"
+                        TextChanged="OnBuscaTextChanged" />
+
+                    <Grid ColumnDefinitions="*,*" Padding="0,4">
+                        <Label Text="Nome" FontAttributes="Bold" />
+                        <Label Grid.Column="1" Text="E-mail" FontAttributes="Bold" />
+                    </Grid>
+
+                    <CollectionView
+                        x:Name="ClientesCollection"
+                        HeightRequest="180"
+                        SelectionMode="Single"
+                        SelectionChanged="OnSelecaoChanged"
+                        EmptyView="Nenhum cliente cadastrado">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="*,*" Padding="0,8">
+                                    <Label Text="{Binding Nome}" />
+                                    <Label Grid.Column="1" Text="{Binding Email}" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border
+                Padding="16"
+                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource DarkSurface}}">
+                <VerticalStackLayout Spacing="12">
+                    <Label
+                        x:Name="TituloFormulario"
+                        Text="Dados do cliente"
+                        Style="{StaticResource SubHeadline}"
+                        SemanticProperties.HeadingLevel="Level2" />
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="3">
+                            <Label Text="Nome" />
+                            <Entry x:Name="NomeEntry" Placeholder="Nome completo" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="3">
+                            <Label Text="CPF/CNPJ" />
+                            <Entry x:Name="CpfCnpjEntry" Placeholder="CPF ou CNPJ" Keyboard="Numeric" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="3">
+                            <Label Text="Data de nascimento" />
+                            <Entry x:Name="DtaNascimentoEntry" Placeholder="AAAA-MM-DD" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="3">
+                            <Label Text="Sexo" />
+                            <Picker x:Name="SexoPicker" Title="Selecione" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,2*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="3">
+                            <Label Text="DDD" />
+                            <Entry x:Name="DddTelefoneEntry" Placeholder="DDD" Keyboard="Numeric" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="3">
+                            <Label Text="Telefone" />
+                            <Entry x:Name="TelefoneEntry" Placeholder="Telefone" Keyboard="Telephone" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,2*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="3">
+                            <Label Text="DDD celular" />
+                            <Entry x:Name="DddCelularEntry" Placeholder="DDD" Keyboard="Numeric" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="3">
+                            <Label Text="Celular" />
+                            <Entry x:Name="CelularEntry" Placeholder="Celular" Keyboard="Telephone" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="3">
+                            <Label Text="E-mail" />
+                            <Entry x:Name="EmailEntry" Placeholder="E-mail" Keyboard="Email" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="3">
+                            <Label Text="Número" />
+                            <Entry x:Name="NumeroEntry" Placeholder="Nº" Keyboard="Numeric" WidthRequest="100" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="Logradouro" />
+                        <Entry x:Name="LogradouroEntry" Placeholder="Endereço" />
+                    </VerticalStackLayout>
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12" Margin="0,8,0,0">
+                        <Button
+                            Grid.Column="0"
+                            x:Name="IncluirBtn"
+                            Text="Incluir"
+                            Clicked="OnIncluirClicked"
+                            SemanticProperties.Hint="Prepara um novo cliente para cadastro" />
+                        <Button
+                            Grid.Column="1"
+                            x:Name="SalvarBtn"
+                            Text="Salvar"
+                            Clicked="OnSalvarClicked"
+                            SemanticProperties.Hint="Salva o cliente informado" />
+                        <Button
+                            Grid.Column="2"
+                            x:Name="ExcluirBtn"
+                            Text="Excluir"
+                            Clicked="OnExcluirClicked"
+                            IsEnabled="False"
+                            SemanticProperties.Hint="Exclui o cliente selecionado" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
 
 </ContentPage>

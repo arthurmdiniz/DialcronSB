@@ -4,118 +4,138 @@
              x:Class="DialcronSB.Views.ProfissionalPage"
              Title="Profissionais">
 
-    <Grid
-        Padding="24"
-        ColumnDefinitions="*,*"
-        ColumnSpacing="24"
-        RowDefinitions="Auto,*"
-        RowSpacing="16">
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="16">
 
-        <Label
-            Grid.Row="0"
-            Grid.ColumnSpan="2"
-            Text="Profissionais"
-            Style="{StaticResource Headline}"
-            SemanticProperties.HeadingLevel="Level1" />
+            <Label
+                Text="Cadastro de Profissionais"
+                Style="{StaticResource Headline}"
+                SemanticProperties.HeadingLevel="Level1" />
 
-        <Border
-            Grid.Row="1"
-            Grid.Column="0"
-            Padding="16"
-            BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource DarkSurface}}">
-            <Grid RowDefinitions="Auto,Auto,*" RowSpacing="12">
-                <Label
-                    Text="Lista"
-                    Style="{StaticResource SubHeadline}"
-                    HorizontalOptions="Start"
-                    HorizontalTextAlignment="Start"
-                    SemanticProperties.HeadingLevel="Level2" />
+            <Border
+                Padding="16"
+                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource DarkSurface}}">
+                <VerticalStackLayout Spacing="12">
+                    <Label
+                        Text="Lista"
+                        Style="{StaticResource SubHeadline}"
+                        SemanticProperties.HeadingLevel="Level2" />
 
-                <Grid
-                    Grid.Row="1"
-                    ColumnDefinitions="60,*"
-                    Padding="0,4">
-                    <Label Text="ID" FontAttributes="Bold" />
-                    <Label Grid.Column="1" Text="Nome" FontAttributes="Bold" />
-                </Grid>
+                    <Grid ColumnDefinitions="*,*" Padding="0,4">
+                        <Label Text="Nome" FontAttributes="Bold" />
+                        <Label Grid.Column="1" Text="Especialidade" FontAttributes="Bold" />
+                    </Grid>
 
-                <CollectionView
-                    x:Name="ProfissionaisCollection"
-                    Grid.Row="2"
-                    SelectionMode="Single"
-                    SelectionChanged="OnSelecaoChanged"
-                    EmptyView="Nenhum profissional cadastrado">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid ColumnDefinitions="60,*" Padding="0,8">
-                                <Label Text="{Binding Id}" />
-                                <Label Grid.Column="1" Text="{Binding Nome}" />
-                            </Grid>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </Grid>
-        </Border>
-
-        <Border
-            Grid.Row="1"
-            Grid.Column="1"
-            Padding="16"
-            BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource DarkSurface}}">
-            <VerticalStackLayout Spacing="16">
-                <Label
-                    Text="Dados do profissional"
-                    Style="{StaticResource SubHeadline}"
-                    HorizontalOptions="Start"
-                    HorizontalTextAlignment="Start"
-                    SemanticProperties.HeadingLevel="Level2" />
-
-                <VerticalStackLayout Spacing="6">
-                    <Label Text="Nome" />
-                    <Entry
-                        x:Name="NomeEntry"
-                        Placeholder="Nome do profissional" />
+                    <CollectionView
+                        x:Name="ProfissionaisCollection"
+                        HeightRequest="180"
+                        SelectionMode="Single"
+                        SelectionChanged="OnSelecaoChanged"
+                        EmptyView="Nenhum profissional cadastrado">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="*,*" Padding="0,8">
+                                    <Label Text="{Binding Nome}" />
+                                    <Label Grid.Column="1" Text="{Binding Especialidade}" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
                 </VerticalStackLayout>
+            </Border>
 
-                <HorizontalStackLayout Spacing="12">
+            <Border
+                Padding="16"
+                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource DarkSurface}}">
+                <VerticalStackLayout Spacing="12">
                     <Label
-                        Text="Ativo"
-                        VerticalOptions="Center" />
-                    <Switch
-                        x:Name="AtivoSwitch"
-                        IsToggled="True"
-                        Toggled="OnAtivoToggled" />
-                    <Label
-                        x:Name="AtivoStatusLabel"
-                        Text="Ativo"
-                        VerticalOptions="Center" />
-                </HorizontalStackLayout>
+                        Text="Dados do profissional"
+                        Style="{StaticResource SubHeadline}"
+                        SemanticProperties.HeadingLevel="Level2" />
 
-                <Grid
-                    ColumnDefinitions="*,*,*"
-                    ColumnSpacing="12"
-                    Margin="0,8,0,0">
-                    <Button
-                        Grid.Column="0"
-                        x:Name="IncluirBtn"
-                        Text="Incluir"
-                        Clicked="OnIncluirClicked"
-                        SemanticProperties.Hint="Prepara um novo profissional para cadastro" />
-                    <Button
-                        Grid.Column="1"
-                        x:Name="SalvarBtn"
-                        Text="Salvar"
-                        Clicked="OnSalvarClicked"
-                        SemanticProperties.Hint="Salva o profissional informado" />
-                    <Button
-                        Grid.Column="2"
-                        x:Name="CancelarBtn"
-                        Text="Cancelar"
-                        Clicked="OnCancelarClicked"
-                        SemanticProperties.Hint="Cancela a edição e limpa o formulário" />
-                </Grid>
-            </VerticalStackLayout>
-        </Border>
-    </Grid>
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="Unidade" />
+                        <Picker
+                            x:Name="UnidadePicker"
+                            Title="Selecione a unidade"
+                            ItemDisplayBinding="{Binding Exibicao}" />
+                    </VerticalStackLayout>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="3">
+                            <Label Text="Nome" />
+                            <Entry x:Name="NomeEntry" Placeholder="Nome do profissional" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="3">
+                            <Label Text="Especialidade" />
+                            <Entry x:Name="EspecialidadeEntry" Placeholder="Ex.: Cabeleireiro" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,2*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="3">
+                            <Label Text="DDD" />
+                            <Entry x:Name="DddTelefoneEntry" Placeholder="DDD" Keyboard="Numeric" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="3">
+                            <Label Text="Telefone" />
+                            <Entry x:Name="TelefoneEntry" Placeholder="Telefone" Keyboard="Telephone" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,2*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="3">
+                            <Label Text="DDD celular" />
+                            <Entry x:Name="DddCelularEntry" Placeholder="DDD" Keyboard="Numeric" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="3">
+                            <Label Text="Celular" />
+                            <Entry x:Name="CelularEntry" Placeholder="Celular" Keyboard="Telephone" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,2*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="3">
+                            <Label Text="DDD outros" />
+                            <Entry x:Name="DddOutrosEntry" Placeholder="DDD" Keyboard="Numeric" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="3">
+                            <Label Text="Telefone outros" />
+                            <Entry x:Name="TelefoneOutrosEntry" Placeholder="Telefone" Keyboard="Telephone" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <HorizontalStackLayout Spacing="12">
+                        <Label Text="Ativo" VerticalOptions="Center" />
+                        <Switch x:Name="AtivoSwitch" IsToggled="True" Toggled="OnAtivoToggled" />
+                        <Label x:Name="AtivoStatusLabel" Text="Ativo" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12" Margin="0,8,0,0">
+                        <Button
+                            Grid.Column="0"
+                            x:Name="IncluirBtn"
+                            Text="Incluir"
+                            Clicked="OnIncluirClicked"
+                            SemanticProperties.Hint="Prepara um novo profissional para cadastro" />
+                        <Button
+                            Grid.Column="1"
+                            x:Name="SalvarBtn"
+                            Text="Salvar"
+                            Clicked="OnSalvarClicked"
+                            SemanticProperties.Hint="Salva o profissional informado" />
+                        <Button
+                            Grid.Column="2"
+                            x:Name="ExcluirBtn"
+                            Text="Excluir"
+                            Clicked="OnExcluirClicked"
+                            IsEnabled="False"
+                            SemanticProperties.Hint="Exclui o profissional selecionado" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
 
 </ContentPage>

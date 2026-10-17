@@ -4,20 +4,158 @@
              x:Class="DialcronSB.Views.AgendaPage"
              Title="Agenda">
 
-    <VerticalStackLayout
-        Padding="30,0"
-        Spacing="15"
-        VerticalOptions="Center">
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="16">
 
-        <Label
-            Text="Agenda"
-            Style="{StaticResource Headline}"
-            SemanticProperties.HeadingLevel="Level1" />
+            <Label
+                Text="Agenda"
+                Style="{StaticResource Headline}"
+                SemanticProperties.HeadingLevel="Level1" />
 
-        <Label
-            Text="Tela em construção"
-            Style="{StaticResource SubHeadline}" />
+            <Border
+                Padding="16"
+                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource DarkSurface}}">
+                <VerticalStackLayout Spacing="12">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                        <Label
+                            Text="Atendimentos do dia"
+                            Style="{StaticResource SubHeadline}"
+                            VerticalOptions="Center"
+                            SemanticProperties.HeadingLevel="Level2" />
+                        <DatePicker
+                            x:Name="DiaPicker"
+                            Grid.Column="1"
+                            DateSelected="OnDiaSelecionado" />
+                    </Grid>
 
-    </VerticalStackLayout>
+                    <Grid ColumnDefinitions="90,*,*,Auto" Padding="0,4">
+                        <Label Text="Horário" FontAttributes="Bold" />
+                        <Label Grid.Column="1" Text="Cliente" FontAttributes="Bold" />
+                        <Label Grid.Column="2" Text="Profissional" FontAttributes="Bold" />
+                        <Label Grid.Column="3" Text="Situação" FontAttributes="Bold" />
+                    </Grid>
+
+                    <CollectionView
+                        x:Name="AtendimentosCollection"
+                        HeightRequest="200"
+                        SelectionMode="Single"
+                        SelectionChanged="OnAtendimentoSelecionado"
+                        EmptyView="Nenhum atendimento neste dia">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="90,*,*,Auto" ColumnSpacing="8" Padding="0,8">
+                                    <Label Text="{Binding Horario}" />
+                                    <Label Grid.Column="1" Text="{Binding NomeCliente}" />
+                                    <Label Grid.Column="2" Text="{Binding NomeProfissional}" />
+                                    <Label Grid.Column="3" Text="{Binding SituacaoTexto}" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border
+                Padding="16"
+                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource DarkSurface}}">
+                <VerticalStackLayout Spacing="12">
+                    <Label
+                        x:Name="TituloFormulario"
+                        Text="Novo atendimento"
+                        Style="{StaticResource SubHeadline}"
+                        SemanticProperties.HeadingLevel="Level2" />
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="3">
+                            <Label Text="Unidade" />
+                            <Picker x:Name="UnidadePicker" Title="Unidade" ItemDisplayBinding="{Binding Exibicao}" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="3">
+                            <Label Text="Cliente" />
+                            <Picker x:Name="ClientePicker" Title="Cliente" ItemDisplayBinding="{Binding Exibicao}" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="3">
+                            <Label Text="Profissional" />
+                            <Picker x:Name="ProfissionalPicker" Title="Profissional" ItemDisplayBinding="{Binding Nome}" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="3">
+                            <Label Text="Situação" />
+                            <Picker x:Name="SituacaoPicker" Title="Situação" ItemDisplayBinding="{Binding Texto}" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="3">
+                            <Label Text="Data" />
+                            <DatePicker x:Name="DataPicker" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="3">
+                            <Label Text="Hora" />
+                            <TimePicker x:Name="HoraPicker" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="2" Spacing="3">
+                            <Label Text="Valor (R$)" />
+                            <Entry x:Name="ValorEntry" Placeholder="0,00" Keyboard="Numeric" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="Serviços" />
+                        <CollectionView
+                            x:Name="ServicosCollection"
+                            HeightRequest="140"
+                            SelectionMode="Multiple"
+                            SelectionChanged="OnServicosSelecionados"
+                            EmptyView="Cadastre serviços para selecioná-los">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="*,Auto" Padding="0,6">
+                                        <Label Text="{Binding Nome}" />
+                                        <Label Grid.Column="1" Text="{Binding Preco, StringFormat='R$ {0:N2}'}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+
+                    <HorizontalStackLayout Spacing="12">
+                        <Label Text="Pago" VerticalOptions="Center" />
+                        <Switch x:Name="PagoSwitch" IsToggled="False" />
+                    </HorizontalStackLayout>
+
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="Observação" />
+                        <Entry x:Name="ObservacaoEntry" Placeholder="Observação" />
+                    </VerticalStackLayout>
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12" Margin="0,8,0,0">
+                        <Button
+                            Grid.Column="0"
+                            x:Name="IncluirBtn"
+                            Text="Incluir"
+                            Clicked="OnIncluirClicked"
+                            SemanticProperties.Hint="Prepara um novo atendimento" />
+                        <Button
+                            Grid.Column="1"
+                            x:Name="SalvarBtn"
+                            Text="Salvar"
+                            Clicked="OnSalvarClicked"
+                            SemanticProperties.Hint="Salva o atendimento informado" />
+                        <Button
+                            Grid.Column="2"
+                            x:Name="ExcluirBtn"
+                            Text="Excluir"
+                            Clicked="OnExcluirClicked"
+                            IsEnabled="False"
+                            SemanticProperties.Hint="Exclui o atendimento selecionado" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
 
 </ContentPage>
