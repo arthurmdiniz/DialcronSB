@@ -122,10 +122,10 @@ public partial class UnidadePage : ContentPage
 	{
 		NomeFantasiaEntry.Text = unidade.NomeFantasia;
 		RazaoSocialEntry.Text = unidade.RazaoSocial;
-		CnpjEntry.Text = unidade.Cnpj;
+		CepEntry.Text = Formatador.Cep(unidade.Cep);
+		CnpjEntry.Text = Formatador.CpfCnpj(unidade.Cnpj);
 		InscEstadualEntry.Text = unidade.InscEstadual;
 		InscMunicipalEntry.Text = unidade.InscMunicipal;
-		CepEntry.Text = Conversor.ParaTexto(unidade.Cep);
 		LogradouroEntry.Text = unidade.Logradouro;
 		NumeroEntry.Text = Conversor.ParaTexto(unidade.Numero);
 		BairroEntry.Text = unidade.Bairro;
@@ -134,8 +134,8 @@ public partial class UnidadePage : ContentPage
 		MunicipioEntry.Text = unidade.Municipio;
 		PaisEntry.Text = unidade.Pais;
 		EmailEntry.Text = unidade.Email;
-		DddEntry.Text = Conversor.ParaTexto(unidade.Ddd);
-		TelefoneEntry.Text = Conversor.ParaTexto(unidade.Telefone);
+		DddEntry.Text = Formatador.NumeroTelefone(unidade.Ddd);
+		TelefoneEntry.Text = Formatador.NumeroTelefone(unidade.Telefone);
 		ExcluirBtn.IsEnabled = true;
 	}
 
@@ -143,10 +143,10 @@ public partial class UnidadePage : ContentPage
 	{
 		unidade.NomeFantasia = Conversor.ParaTextoOuNulo(NomeFantasiaEntry.Text);
 		unidade.RazaoSocial = Conversor.ParaTextoOuNulo(RazaoSocialEntry.Text);
-		unidade.Cnpj = Conversor.ParaTextoOuNulo(CnpjEntry.Text);
+		unidade.Cnpj = Conversor.ParaTextoOuNulo(Formatador.SomenteDigitos(CnpjEntry.Text));
 		unidade.InscEstadual = Conversor.ParaTextoOuNulo(InscEstadualEntry.Text);
 		unidade.InscMunicipal = Conversor.ParaTextoOuNulo(InscMunicipalEntry.Text);
-		unidade.Cep = Conversor.ParaInt(CepEntry.Text);
+		unidade.Cep = Conversor.ParaInt(Formatador.SomenteDigitos(CepEntry.Text));
 		unidade.Logradouro = Conversor.ParaTextoOuNulo(LogradouroEntry.Text);
 		unidade.Numero = Conversor.ParaInt(NumeroEntry.Text);
 		unidade.Bairro = Conversor.ParaTextoOuNulo(BairroEntry.Text);
@@ -155,8 +155,8 @@ public partial class UnidadePage : ContentPage
 		unidade.Municipio = Conversor.ParaTextoOuNulo(MunicipioEntry.Text);
 		unidade.Pais = Conversor.ParaTextoOuNulo(PaisEntry.Text);
 		unidade.Email = Conversor.ParaTextoOuNulo(EmailEntry.Text);
-		unidade.Ddd = Conversor.ParaInt(DddEntry.Text);
-		unidade.Telefone = Conversor.ParaInt(TelefoneEntry.Text);
+		unidade.Ddd = Conversor.ParaInt(Formatador.SomenteDigitos(DddEntry.Text));
+		unidade.Telefone = Conversor.ParaInt(Formatador.SomenteDigitos(TelefoneEntry.Text));
 	}
 
 	private void LimparFormulario()
@@ -179,4 +179,28 @@ public partial class UnidadePage : ContentPage
 		TelefoneEntry.Text = string.Empty;
 		ExcluirBtn.IsEnabled = false;
 	}
+
+    private void OnMascaraDdd(object? sender, TextChangedEventArgs e)
+    {
+        if (sender is Entry entry)
+            Mascara.Aplicar(entry, Formatador.MascaraDdd);
+    }
+
+    private void OnMascaraTelefone(object? sender, TextChangedEventArgs e)
+    {
+        if (sender is Entry entry)
+            Mascara.Aplicar(entry, Formatador.MascaraNumeroTelefone);
+    }
+
+    private void OnMascaraDocumento(object? sender, TextChangedEventArgs e)
+    {
+        if (sender is Entry entry)
+            Mascara.Aplicar(entry, Formatador.MascaraCpfCnpj);
+    }
+
+    private void OnMascaraCep(object? sender, TextChangedEventArgs e)
+    {
+        if (sender is Entry entry)
+            Mascara.Aplicar(entry, Formatador.MascaraCep);
+    }
 }

@@ -1,3 +1,4 @@
+using DialcronSB.Data;
 using SQLite;
 
 namespace DialcronSB.Models;
@@ -61,4 +62,13 @@ public class Unidade
 
 	[Ignore]
 	public string Exibicao => string.IsNullOrWhiteSpace(NomeFantasia) ? $"Unidade {IdUnidade}" : NomeFantasia;
+
+	[Ignore]
+    public string TelefoneExibicao => Formatador.Telefone(Ddd, Telefone);
+
+	[Ignore]
+    public string CnpjExibicao => Formatador.CpfCnpj(Cnpj);
+
+	[Ignore]
+    public string CepExibicao => Formatador.Cep(Cep);
 }

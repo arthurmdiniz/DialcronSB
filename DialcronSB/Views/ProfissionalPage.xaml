@@ -21,9 +21,10 @@
                         Style="{StaticResource SubHeadline}"
                         SemanticProperties.HeadingLevel="Level2" />
 
-                    <Grid ColumnDefinitions="*,*" Padding="0,4">
+                    <Grid ColumnDefinitions="2*,2*,3*" Padding="0,4">
                         <Label Text="Nome" FontAttributes="Bold" />
                         <Label Grid.Column="1" Text="Especialidade" FontAttributes="Bold" />
+                        <Label Grid.Column="2" Text="Celular" FontAttributes="Bold" />
                     </Grid>
 
                     <CollectionView
@@ -34,9 +35,10 @@
                         EmptyView="Nenhum profissional cadastrado">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <Grid ColumnDefinitions="*,*" Padding="0,8">
+                                <Grid ColumnDefinitions="2*,2*,3*" Padding="0,8">
                                     <Label Text="{Binding Nome}" />
                                     <Label Grid.Column="1" Text="{Binding Especialidade}" />
+                                    <Label Grid.Column="2" Text="{Binding CelularExibicao}" />
                                 </Grid>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
@@ -74,34 +76,36 @@
 
                     <Grid ColumnDefinitions="*,2*" ColumnSpacing="12">
                         <VerticalStackLayout Grid.Column="0" Spacing="3">
-                            <Label Text="DDD" />
-                            <Entry x:Name="DddTelefoneEntry" Placeholder="DDD" Keyboard="Numeric" />
-                        </VerticalStackLayout>
-                        <VerticalStackLayout Grid.Column="1" Spacing="3">
-                            <Label Text="Telefone" />
-                            <Entry x:Name="TelefoneEntry" Placeholder="Telefone" Keyboard="Telephone" />
-                        </VerticalStackLayout>
-                    </Grid>
-
-                    <Grid ColumnDefinitions="*,2*" ColumnSpacing="12">
-                        <VerticalStackLayout Grid.Column="0" Spacing="3">
                             <Label Text="DDD celular" />
-                            <Entry x:Name="DddCelularEntry" Placeholder="DDD" Keyboard="Numeric" />
+                            <Entry x:Name="DddCelularEntry" Placeholder="DDD" Keyboard="Numeric" TextChanged="OnMascaraDdd" />
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="1" Spacing="3">
                             <Label Text="Celular" />
-                            <Entry x:Name="CelularEntry" Placeholder="Celular" Keyboard="Telephone" />
+                            <Entry x:Name="CelularEntry" Placeholder="Celular" Keyboard="Telephone" TextChanged="OnMascaraTelefone"/>
                         </VerticalStackLayout>
                     </Grid>
 
+
+                    <Grid ColumnDefinitions="*,2*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="3">
+                            <Label Text="DDD" />
+                            <Entry x:Name="DddTelefoneEntry" Placeholder="DDD" Keyboard="Numeric" TextChanged="OnMascaraDdd" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="3">
+                            <Label Text="Telefone" />
+                            <Entry x:Name="TelefoneEntry" Placeholder="Telefone" Keyboard="Telephone" TextChanged="OnMascaraTelefone" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                   
                     <Grid ColumnDefinitions="*,2*" ColumnSpacing="12">
                         <VerticalStackLayout Grid.Column="0" Spacing="3">
                             <Label Text="DDD outros" />
-                            <Entry x:Name="DddOutrosEntry" Placeholder="DDD" Keyboard="Numeric" />
+                            <Entry x:Name="DddOutrosEntry" Placeholder="DDD" Keyboard="Numeric" TextChanged="OnMascaraDdd" />
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="1" Spacing="3">
                             <Label Text="Telefone outros" />
-                            <Entry x:Name="TelefoneOutrosEntry" Placeholder="Telefone" Keyboard="Telephone" />
+                            <Entry x:Name="TelefoneOutrosEntry" Placeholder="Telefone" Keyboard="Telephone" TextChanged="OnMascaraTelefone" />
                         </VerticalStackLayout>
                     </Grid>
 

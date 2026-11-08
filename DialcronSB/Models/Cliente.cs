@@ -1,3 +1,4 @@
+using DialcronSB.Data;
 using SQLite;
 
 namespace DialcronSB.Models;
@@ -46,4 +47,15 @@ public class Cliente
 
 	[Ignore]
 	public string Exibicao => Nome;
+
+	[Ignore]
+	public string TelefoneExibicao => Formatador.Telefone(DddTelefone, Telefone);
+
+	[Ignore]
+    public string CelularExibicao => Formatador.Telefone(DddCelular, Celular);
+
+	[Ignore]
+    public string CpfCnpjExibicao => Formatador.CpfCnpj(CpfCnpj);
+
+
 }

@@ -35,6 +35,9 @@
 		<!-- App Identifier -->
 		<ApplicationId>br.com.dialcron.salao</ApplicationId>
 
+		<!-- NuGet exige o mesmo PackageId em todos os TFMs (nao herdar do AssemblyName por configuracao) -->
+		<PackageId>DialcronSB</PackageId>
+
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>

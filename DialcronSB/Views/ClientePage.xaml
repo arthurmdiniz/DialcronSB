@@ -66,7 +66,7 @@
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="1" Spacing="3">
                             <Label Text="CPF/CNPJ" />
-                            <Entry x:Name="CpfCnpjEntry" Placeholder="CPF ou CNPJ" Keyboard="Numeric" />
+                            <Entry x:Name="CpfCnpjEntry" Placeholder="CPF ou CNPJ" Keyboard="Numeric" TextChanged="OnMascaraDocumento" />
                         </VerticalStackLayout>
                     </Grid>
 
@@ -84,22 +84,22 @@
                     <Grid ColumnDefinitions="*,2*" ColumnSpacing="12">
                         <VerticalStackLayout Grid.Column="0" Spacing="3">
                             <Label Text="DDD" />
-                            <Entry x:Name="DddTelefoneEntry" Placeholder="DDD" Keyboard="Numeric" />
+                            <Entry x:Name="DddTelefoneEntry" Placeholder="DDD" Keyboard="Numeric" TextChanged="OnMascaraDdd" />
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="1" Spacing="3">
                             <Label Text="Telefone" />
-                            <Entry x:Name="TelefoneEntry" Placeholder="Telefone" Keyboard="Telephone" />
+                            <Entry x:Name="TelefoneEntry" Placeholder="Telefone" Keyboard="Telephone" TextChanged="OnMascaraTelefone" />
                         </VerticalStackLayout>
                     </Grid>
 
                     <Grid ColumnDefinitions="*,2*" ColumnSpacing="12">
                         <VerticalStackLayout Grid.Column="0" Spacing="3">
                             <Label Text="DDD celular" />
-                            <Entry x:Name="DddCelularEntry" Placeholder="DDD" Keyboard="Numeric" />
+                            <Entry x:Name="DddCelularEntry" Placeholder="DDD" Keyboard="Numeric" TextChanged="OnMascaraDdd" />
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="1" Spacing="3">
                             <Label Text="Celular" />
-                            <Entry x:Name="CelularEntry" Placeholder="Celular" Keyboard="Telephone" />
+                            <Entry x:Name="CelularEntry" Placeholder="Celular" Keyboard="Telephone" TextChanged="OnMascaraTelefone" />
                         </VerticalStackLayout>
                     </Grid>
 

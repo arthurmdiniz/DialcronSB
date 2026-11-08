@@ -39,22 +39,27 @@ public partial class ClientePage : ContentPage
 		}
 	}
 
-	private void AplicarFiltro()
-	{
-		var termo = BuscaBar.Text?.Trim() ?? string.Empty;
+    private void AplicarFiltro()
+    {
+        var termo = BuscaBar.Text?.Trim() ?? string.Empty;
+        var termoDigitos = Formatador.SomenteDigitos(termo);
+        var buscarPorDigitos = termoDigitos.Length > 0;
 
-		_clientes.Clear();
+        _clientes.Clear();
 
-		foreach (var cliente in _todos.Where(c =>
-			string.IsNullOrEmpty(termo)
-			|| c.Nome.Contains(termo, StringComparison.OrdinalIgnoreCase)
-			|| (c.CpfCnpj ?? string.Empty).Contains(termo, StringComparison.OrdinalIgnoreCase)))
-		{
-			_clientes.Add(cliente);
-		}
-	}
+        foreach (var cliente in _todos.Where(c =>
+            string.IsNullOrEmpty(termo)
+            || c.Nome.Contains(termo, StringComparison.OrdinalIgnoreCase)
+            || (buscarPorDigitos && (
+                Formatador.SomenteDigitos(c.CpfCnpj).Contains(termoDigitos, StringComparison.Ordinal)
+                || Formatador.SomenteDigitos($"{c.DddTelefone}{c.Telefone}").Contains(termoDigitos, StringComparison.Ordinal)
+                || Formatador.SomenteDigitos($"{c.DddCelular}{c.Celular}").Contains(termoDigitos, StringComparison.Ordinal)))))
+        {
+            _clientes.Add(cliente);
+        }
+    }
 
-	private void OnBuscaTextChanged(object? sender, TextChangedEventArgs e)
+    private void OnBuscaTextChanged(object? sender, TextChangedEventArgs e)
 	{
 		AplicarFiltro();
 	}
@@ -158,10 +163,10 @@ public partial class ClientePage : ContentPage
 			"F" => 1,
 			_ => -1
 		};
-		DddTelefoneEntry.Text = Conversor.ParaTexto(cliente.DddTelefone);
-		TelefoneEntry.Text = Conversor.ParaTexto(cliente.Telefone);
-		DddCelularEntry.Text = Conversor.ParaTexto(cliente.DddCelular);
-		CelularEntry.Text = Conversor.ParaTexto(cliente.Celular);
+		DddTelefoneEntry.Text = Formatador.NumeroTelefone(cliente.DddTelefone);
+		TelefoneEntry.Text = Formatador.NumeroTelefone(cliente.Telefone);
+		DddCelularEntry.Text = Formatador.NumeroTelefone(cliente.DddCelular);
+		CelularEntry.Text = Formatador.NumeroTelefone(cliente.Celular);
 		EmailEntry.Text = cliente.Email;
 		NumeroEntry.Text = Conversor.ParaTexto(cliente.Numero);
 		LogradouroEntry.Text = cliente.Logradouro;
@@ -179,10 +184,10 @@ public partial class ClientePage : ContentPage
 			1 => "F",
 			_ => null
 		};
-		cliente.DddTelefone = Conversor.ParaInt(DddTelefoneEntry.Text);
-		cliente.Telefone = Conversor.ParaInt(TelefoneEntry.Text);
-		cliente.DddCelular = Conversor.ParaInt(DddCelularEntry.Text);
-		cliente.Celular = Conversor.ParaInt(CelularEntry.Text);
+		cliente.DddTelefone = Conversor.ParaInt(Formatador.SomenteDigitos(DddTelefoneEntry.Text));
+		cliente.Telefone = Conversor.ParaInt(Formatador.SomenteDigitos(TelefoneEntry.Text));
+		cliente.DddCelular = Conversor.ParaInt(Formatador.SomenteDigitos(DddCelularEntry.Text));
+		cliente.Celular = Conversor.ParaInt(Formatador.SomenteDigitos(CelularEntry.Text));
 		cliente.Email = Conversor.ParaTextoOuNulo(EmailEntry.Text);
 		cliente.Numero = Conversor.ParaInt(NumeroEntry.Text);
 		cliente.Logradouro = Conversor.ParaTextoOuNulo(LogradouroEntry.Text);
@@ -203,4 +208,28 @@ public partial class ClientePage : ContentPage
 		LogradouroEntry.Text = string.Empty;
 		ExcluirBtn.IsEnabled = false;
 	}
+
+    private void OnMascaraDdd(object? sender, TextChangedEventArgs e)
+    {
+        if (sender is Entry entry)
+            Mascara.Aplicar(entry, Formatador.MascaraDdd);
+    }
+
+    private void OnMascaraTelefone(object? sender, TextChangedEventArgs e)
+    {
+        if (sender is Entry entry)
+            Mascara.Aplicar(entry, Formatador.MascaraNumeroTelefone);
+    }
+
+    private void OnMascaraDocumento(object? sender, TextChangedEventArgs e)
+    {
+        if (sender is Entry entry)
+            Mascara.Aplicar(entry, Formatador.MascaraCpfCnpj);
+    }
+
+    private void OnMascaraCep(object? sender, TextChangedEventArgs e)
+    {
+        if (sender is Entry entry)
+            Mascara.Aplicar(entry, Formatador.MascaraCep);
+    }
 }

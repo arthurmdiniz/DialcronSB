@@ -67,7 +67,7 @@
                     <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
                         <VerticalStackLayout Grid.Column="0" Spacing="3">
                             <Label Text="CNPJ" />
-                            <Entry x:Name="CnpjEntry" Placeholder="CNPJ" Keyboard="Numeric" />
+                            <Entry x:Name="CnpjEntry" Placeholder="CNPJ" Keyboard="Numeric" TextChanged="OnMascaraDocumento" />
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="1" Spacing="3">
                             <Label Text="Insc. estadual" />
@@ -82,7 +82,7 @@
                     <Grid ColumnDefinitions="*,2*,*" ColumnSpacing="12">
                         <VerticalStackLayout Grid.Column="0" Spacing="3">
                             <Label Text="CEP" />
-                            <Entry x:Name="CepEntry" Placeholder="CEP" Keyboard="Numeric" />
+                            <Entry x:Name="CepEntry" Placeholder="CEP" Keyboard="Numeric" TextChanged="OnMascaraCep" />
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="1" Spacing="3">
                             <Label Text="Logradouro" />
@@ -127,11 +127,11 @@
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="1" Spacing="3">
                             <Label Text="DDD" />
-                            <Entry x:Name="DddEntry" Placeholder="DDD" Keyboard="Numeric" />
+                            <Entry x:Name="DddEntry" Placeholder="DDD" Keyboard="Numeric" TextChanged="OnMascaraDdd" />
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="2" Spacing="3">
                             <Label Text="Telefone" />
-                            <Entry x:Name="TelefoneEntry" Placeholder="Telefone" Keyboard="Telephone" />
+                            <Entry x:Name="TelefoneEntry" Placeholder="Telefone" Keyboard="Telephone" TextChanged="OnMascaraTelefone" />
                         </VerticalStackLayout>
                     </Grid>
 

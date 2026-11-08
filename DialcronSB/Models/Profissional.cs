@@ -1,3 +1,4 @@
+using DialcronSB.Data;
 using SQLite;
 
 namespace DialcronSB.Models;
@@ -40,4 +41,16 @@ public class Profissional
 
 	[Ignore]
 	public bool EstaAtivo => Ativo == "S";
+
+
+	[Ignore]
+	public string CelularExibicao => Formatador.Telefone(DddCelular, Celular);
+
+    [Ignore]
+    public string TelefoneExibicao => Formatador.Telefone(DddTelefone, Telefone);
+
+	[Ignore]
+    public string TelefoneOutrosExibicao => Formatador.Telefone(DddOutros, TelefoneOutros);
+
+
 }

@@ -97,12 +97,12 @@ public partial class ProfissionalPage : ContentPage
 			profissional.Unidade = unidade.IdUnidade;
 			profissional.Nome = nome;
 			profissional.Especialidade = Conversor.ParaTextoOuNulo(EspecialidadeEntry.Text);
-			profissional.DddTelefone = Conversor.ParaInt(DddTelefoneEntry.Text);
-			profissional.Telefone = Conversor.ParaInt(TelefoneEntry.Text);
-			profissional.DddCelular = Conversor.ParaInt(DddCelularEntry.Text);
-			profissional.Celular = Conversor.ParaInt(CelularEntry.Text);
-			profissional.DddOutros = Conversor.ParaInt(DddOutrosEntry.Text);
-			profissional.TelefoneOutros = Conversor.ParaInt(TelefoneOutrosEntry.Text);
+			profissional.DddTelefone = Conversor.ParaInt(Formatador.SomenteDigitos(DddTelefoneEntry.Text));
+			profissional.Telefone = Conversor.ParaInt(Formatador.SomenteDigitos(TelefoneEntry.Text));
+			profissional.DddCelular = Conversor.ParaInt(Formatador.SomenteDigitos(DddCelularEntry.Text));
+			profissional.Celular = Conversor.ParaInt(Formatador.SomenteDigitos(CelularEntry.Text));
+			profissional.DddOutros = Conversor.ParaInt(Formatador.SomenteDigitos(DddOutrosEntry.Text));
+			profissional.TelefoneOutros = Conversor.ParaInt(Formatador.SomenteDigitos(TelefoneOutrosEntry.Text));
 			profissional.Ativo = Conversor.ParaSimNao(AtivoSwitch.IsToggled);
 
 			if (profissional.Id == 0)
@@ -151,12 +151,12 @@ public partial class ProfissionalPage : ContentPage
 			.FirstOrDefault(u => u.IdUnidade == profissional.Unidade);
 		NomeEntry.Text = profissional.Nome;
 		EspecialidadeEntry.Text = profissional.Especialidade;
-		DddTelefoneEntry.Text = Conversor.ParaTexto(profissional.DddTelefone);
-		TelefoneEntry.Text = Conversor.ParaTexto(profissional.Telefone);
-		DddCelularEntry.Text = Conversor.ParaTexto(profissional.DddCelular);
-		CelularEntry.Text = Conversor.ParaTexto(profissional.Celular);
-		DddOutrosEntry.Text = Conversor.ParaTexto(profissional.DddOutros);
-		TelefoneOutrosEntry.Text = Conversor.ParaTexto(profissional.TelefoneOutros);
+		DddTelefoneEntry.Text = Formatador.NumeroTelefone(profissional.DddTelefone);
+		TelefoneEntry.Text = Formatador.NumeroTelefone(profissional.Telefone);
+		DddCelularEntry.Text = Formatador.NumeroTelefone(profissional.DddCelular);
+		CelularEntry.Text = Formatador.NumeroTelefone(profissional.Celular);
+		DddOutrosEntry.Text = Formatador.NumeroTelefone(profissional.DddOutros);
+		TelefoneOutrosEntry.Text = Formatador.NumeroTelefone(profissional.TelefoneOutros);
 		AtivoSwitch.IsToggled = profissional.EstaAtivo;
 		ExcluirBtn.IsEnabled = true;
 	}
@@ -174,4 +174,28 @@ public partial class ProfissionalPage : ContentPage
 		AtivoSwitch.IsToggled = true;
 		ExcluirBtn.IsEnabled = false;
 	}
+
+    private void OnMascaraDdd(object? sender, TextChangedEventArgs e)
+    {
+        if (sender is Entry entry)
+            Mascara.Aplicar(entry, Formatador.MascaraDdd);
+    }
+
+    private void OnMascaraTelefone(object? sender, TextChangedEventArgs e)
+    {
+        if (sender is Entry entry)
+            Mascara.Aplicar(entry, Formatador.MascaraNumeroTelefone);
+    }
+
+    private void OnMascaraDocumento(object? sender, TextChangedEventArgs e)
+    {
+        if (sender is Entry entry)
+            Mascara.Aplicar(entry, Formatador.MascaraCpfCnpj);
+    }
+
+    private void OnMascaraCep(object? sender, TextChangedEventArgs e)
+    {
+        if (sender is Entry entry)
+            Mascara.Aplicar(entry, Formatador.MascaraCep);
+    }
 }
