@@ -198,7 +198,9 @@ dotnet publish -c Release -f net10.0-windows10.0.19041.0
 
 ## CI/CD com GitHub Actions
 
-O repositorio usa `.github/workflows/build.yml` para compilar automaticamente Windows e Android a cada push na `main` (tambem em pull requests e via `workflow_dispatch`).
+O repositorio usa `.github/workflows/build.yml` para compilar automaticamente Windows e Android a cada push na `main` ou na `develop` (tambem em pull requests e via `workflow_dispatch`).
+
+O modelo de branches e `feature/* -> develop -> main`. As features entram em `develop`; **o Release so e gerado no merge de `develop` para `main`**, com tag baseada em `ApplicationDisplayVersion`. Por isso, todo PR para `main` deve bumpar a versao.
 
 ### Artifacts (aba Actions > Artifacts)
 

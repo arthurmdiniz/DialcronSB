@@ -177,7 +177,14 @@ O target MSBuild `RemoveUnwantedLocales` roda apos Build e Publish, removendo pa
 
 ## CI/CD - GitHub Actions
 
-Workflow: `.github/workflows/build.yml` - build automatico em push para `main`, pull request e `workflow_dispatch`.
+Workflow: `.github/workflows/build.yml` - build automatico em push e pull request para `main` ou `develop`, e via `workflow_dispatch`.
+
+### Fluxo de branches
+
+- `feature/*` nasce de `develop` e mira `develop` no PR.
+- `develop` e a branch de integracao: push e PR nela compilam e geram artifacts, mas **nao** criam Release.
+- `develop -> main` e o unico fluxo que cria/atualiza o Release; a tag vem de `ApplicationDisplayVersion`. Todo PR para `main` deve bumpar a versao.
+- `hotfix/*` nasce de `main`, vai para `main` (gera Release) e o mesmo commit volta para `develop`.
 
 ### Ambiente
 

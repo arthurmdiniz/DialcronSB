@@ -3,7 +3,7 @@
 ## Resumo
 - {O que foi feito}
 - {Por que}
-- Base: main
+- Base: develop
 
 ## Alteracoes
 - {Arquivo/area}: {mudanca}
@@ -15,3 +15,4 @@
 
 ## Observacoes
 - {Limitacoes / pendencias / como reverter}
+- PR para `main` somente a partir de `develop` (ou `hotfix/*`) e com bump de `ApplicationDisplayVersion`.
