@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DialcronSB.Views.ConfiguracoesPage"
+             Title="Configurações">
+
+    <VerticalStackLayout
+        Padding="30,0"
+        Spacing="15"
+        VerticalOptions="Center">
+
+        <Label
+            Text="Configurações"
+            Style="{StaticResource Headline}"
+            SemanticProperties.HeadingLevel="Level1" />
+
+        <Button
+            x:Name="BackupBtn"
+            Text="Backup"
+            Clicked="OnBackupClicked"
+            SemanticProperties.Hint="Gera um backup do banco de dados"
+            HorizontalOptions="Fill" />
+
+        <Button
+            x:Name="ImportarBtn"
+            Text="Importar backup"
+            Clicked="OnImportarBackupClicked"
+            SemanticProperties.Hint="Restaura o banco de dados a partir de um arquivo de backup"
+            HorizontalOptions="Fill" />
+
+        <Button
+            x:Name="AtualizacoesBtn"
+            Text="Verificar atualização"
+            Clicked="OnVerificarAtualizacoesClicked"
+            SemanticProperties.Hint="Verifica se existe uma versao mais recente no GitHub"
+            HorizontalOptions="Fill" />
+
+        <Label
+            x:Name="VersaoLabel"
+            FontSize="12"
+            TextColor="{StaticResource Gray500}"
+            HorizontalOptions="Center"
+            HorizontalTextAlignment="Center" />
+
+    </VerticalStackLayout>
+
+</ContentPage>
