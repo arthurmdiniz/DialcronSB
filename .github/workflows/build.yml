@@ -77,10 +77,33 @@ jobs:
             -p:AndroidSigningKeyPass=$env:ANDROID_KEY_PASSWORD `
             -p:AndroidSigningStorePass=$env:ANDROID_KEYSTORE_PASSWORD
 
-      - name: Publish Android debug
+      - name: Publish Android debug-signed
         if: env.ANDROID_KEYSTORE_BASE64 == ''
         shell: pwsh
-        run: dotnet publish DialcronSB/DialcronSB.csproj -f net10.0-android -c Debug --no-restore -p:ApplicationVersion=${{ github.run_number }} -p:AndroidPackageFormat=apk
+        run: dotnet publish DialcronSB/DialcronSB.csproj -f net10.0-android -c Release --no-restore -p:ApplicationVersion=${{ github.run_number }} -p:AndroidPackageFormat=apk
+
+      - name: Validate Android APK
+        shell: pwsh
+        run: |
+          $apk = Get-ChildItem 'DialcronSB' -Recurse -Filter '*.apk' -File | Select-Object -First 1
+          if (-not $apk) { throw 'APK nao encontrado apos o publish.' }
+
+          $sdk = $env:ANDROID_HOME
+          if (-not $sdk) { $sdk = $env:ANDROID_SDK_ROOT }
+          $aapt = Get-ChildItem (Join-Path $sdk 'build-tools') -Directory -ErrorAction SilentlyContinue |
+            Sort-Object Name -Descending |
+            ForEach-Object { Get-ChildItem $_.FullName -Filter 'aapt.exe' -File -ErrorAction SilentlyContinue } |
+            Select-Object -First 1
+          if (-not $aapt) { throw 'aapt.exe nao encontrado no Android SDK.' }
+
+          $entries = & $aapt.FullName list $apk.FullName
+          $assemblies = @($entries | Where-Object { $_ -match '^assemblies/.+\.dll$' })
+          $aot = @($entries | Where-Object { $_ -match '^lib/.+/libaot-.+\.dll\.so$' })
+          Write-Host "APK: $($apk.Name) | assemblies: $($assemblies.Count) | AOT: $($aot.Count)"
+
+          if ($assemblies.Count -eq 0 -and $aot.Count -eq 0) {
+            throw 'APK sem assemblies gerenciados (build Debug/Fast Deployment). Publique com -c Release.'
+          }
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
