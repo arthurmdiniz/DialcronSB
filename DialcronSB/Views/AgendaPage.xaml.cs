@@ -34,7 +34,10 @@ public partial class AgendaPage : ContentPage
 
 	private readonly ObservableCollection<AtendimentoItem> _atendimentos = new();
 	private readonly ObservableCollection<Servico> _servicosDisponiveis = new();
+	private readonly ObservableCollection<Cliente> _clientesDisponiveis = new();
+	private List<Cliente> _todosClientes = new();
 	private AtendimentoItem? _selecionado;
+	private Cliente? _clienteSelecionado;
 	private bool _carregando;
 
 	public AgendaPage()
@@ -43,6 +46,7 @@ public partial class AgendaPage : ContentPage
 
 		AtendimentosCollection.ItemsSource = _atendimentos;
 		ServicosCollection.ItemsSource = _servicosDisponiveis;
+		ClientesCollection.ItemsSource = _clientesDisponiveis;
 		SituacaoPicker.ItemsSource = _situacoes;
 		DiaPicker.Date = DateTime.Today;
 		DataPicker.Date = DateTime.Today;
@@ -68,11 +72,11 @@ public partial class AgendaPage : ContentPage
 			var servicos = await new ServicoDAO(connection).GetAllAsync();
 
 			var unidadeAnterior = UnidadePicker.SelectedItem as Unidade;
-			var clienteAnterior = ClientePicker.SelectedItem as Cliente;
+			var clienteAnterior = _clienteSelecionado;
 			var profissionalAnterior = ProfissionalPicker.SelectedItem as Profissional;
 
 			UnidadePicker.ItemsSource = unidades;
-			ClientePicker.ItemsSource = clientes;
+			_todosClientes = clientes;
 			ProfissionalPicker.ItemsSource = profissionais.Where(p => p.EstaAtivo).ToList();
 
 			if (unidadeAnterior is not null)
@@ -80,8 +84,11 @@ public partial class AgendaPage : ContentPage
 			else if (unidades.Count > 0)
 				UnidadePicker.SelectedIndex = 0;
 
-			if (clienteAnterior is not null)
-				ClientePicker.SelectedItem = clientes.FirstOrDefault(c => c.IdCliente == clienteAnterior.IdCliente);
+			_clienteSelecionado = clienteAnterior is not null
+				? clientes.FirstOrDefault(c => c.IdCliente == clienteAnterior.IdCliente)
+				: null;
+			AplicarFiltroClientes();
+			AtualizarClienteSelecionadoLabel();
 
 			if (profissionalAnterior is not null)
 				ProfissionalPicker.SelectedItem = profissionais.FirstOrDefault(p => p.Id == profissionalAnterior.Id);
@@ -94,6 +101,55 @@ public partial class AgendaPage : ContentPage
 		{
 			await DisplayAlertAsync("Agenda", $"Não foi possível carregar os cadastros: {ex.Message}", "OK");
 		}
+	}
+
+	private void AplicarFiltroClientes()
+	{
+		var termo = ClienteBuscaBar.Text?.Trim() ?? string.Empty;
+		var termoDigitos = Formatador.SomenteDigitos(termo);
+		var buscarPorDigitos = termoDigitos.Length > 0;
+
+		_clientesDisponiveis.Clear();
+
+		foreach (var cliente in _todosClientes.Where(c =>
+			string.IsNullOrEmpty(termo)
+			|| c.Nome.Contains(termo, StringComparison.OrdinalIgnoreCase)
+			|| (buscarPorDigitos && (
+				Formatador.SomenteDigitos(c.CpfCnpj).Contains(termoDigitos, StringComparison.Ordinal)
+				|| Formatador.SomenteDigitos($"{c.DddTelefone}{c.Telefone}").Contains(termoDigitos, StringComparison.Ordinal)
+				|| Formatador.SomenteDigitos($"{c.DddCelular}{c.Celular}").Contains(termoDigitos, StringComparison.Ordinal)))))
+		{
+			_clientesDisponiveis.Add(cliente);
+		}
+
+		ClientesVaziosLabel.IsVisible = _clientesDisponiveis.Count == 0;
+	}
+
+	private void OnClienteBuscaTextChanged(object? sender, TextChangedEventArgs e)
+	{
+		AplicarFiltroClientes();
+
+		if (_clienteSelecionado is not null
+			&& !_clientesDisponiveis.Any(c => c.IdCliente == _clienteSelecionado.IdCliente))
+		{
+			_clienteSelecionado = null;
+			ClientesCollection.SelectedItem = null;
+			AtualizarClienteSelecionadoLabel();
+		}
+	}
+
+	private void OnClienteSelecionado(object? sender, SelectionChangedEventArgs e)
+	{
+		_clienteSelecionado = e.CurrentSelection.FirstOrDefault() as Cliente;
+		AtualizarClienteSelecionadoLabel();
+	}
+
+	private void AtualizarClienteSelecionadoLabel()
+	{
+		ClienteSelecionadoLabel.Text = _clienteSelecionado is null
+			? string.Empty
+			: $"Selecionado: {_clienteSelecionado.Nome}";
+		ClienteSelecionadoLabel.IsVisible = _clienteSelecionado is not null;
 	}
 
 	private async Task CarregarDiaAsync()
@@ -177,11 +233,13 @@ public partial class AgendaPage : ContentPage
 				return;
 			}
 
-			if (ClientePicker.SelectedItem is not Cliente cliente)
+			if (_clienteSelecionado is null)
 			{
 				await DisplayAlertAsync("Agenda", "Selecione o cliente.", "OK");
 				return;
 			}
+
+			var cliente = _clienteSelecionado;
 
 			if (ProfissionalPicker.SelectedItem is not Profissional profissional)
 			{
@@ -296,8 +354,11 @@ public partial class AgendaPage : ContentPage
 			TituloFormulario.Text = "Editar atendimento";
 			UnidadePicker.SelectedItem = (UnidadePicker.ItemsSource as IEnumerable<Unidade>)?
 				.FirstOrDefault(u => u.IdUnidade == item.Cabecalho.Unidade);
-			ClientePicker.SelectedItem = (ClientePicker.ItemsSource as IEnumerable<Cliente>)?
-				.FirstOrDefault(c => c.IdCliente == item.Cabecalho.Cliente);
+			_clienteSelecionado = _todosClientes.FirstOrDefault(c => c.IdCliente == item.Cabecalho.Cliente);
+			ClienteBuscaBar.Text = _clienteSelecionado?.Nome ?? string.Empty;
+			AplicarFiltroClientes();
+			ClientesCollection.SelectedItem = _clienteSelecionado;
+			AtualizarClienteSelecionadoLabel();
 			ProfissionalPicker.SelectedItem = (ProfissionalPicker.ItemsSource as IEnumerable<Profissional>)?
 				.FirstOrDefault(p => p.Id == item.Atendimento.Profissional);
 			SituacaoPicker.SelectedItem = _situacoes.FirstOrDefault(s => s.Codigo == item.Atendimento.Situacao);
@@ -326,7 +387,11 @@ public partial class AgendaPage : ContentPage
 		_carregando = true;
 
 		TituloFormulario.Text = "Novo atendimento";
-		ClientePicker.SelectedItem = null;
+		_clienteSelecionado = null;
+		ClienteBuscaBar.Text = string.Empty;
+		AplicarFiltroClientes();
+		ClientesCollection.SelectedItem = null;
+		AtualizarClienteSelecionadoLabel();
 		ProfissionalPicker.SelectedItem = null;
 		SituacaoPicker.SelectedIndex = 0;
 		DataPicker.Date = DiaPicker.Date;
