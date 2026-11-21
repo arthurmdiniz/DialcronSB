@@ -57,6 +57,8 @@ public partial class ClientePage : ContentPage
         {
             _clientes.Add(cliente);
         }
+
+        ListaVaziaLabel.IsVisible = _clientes.Count == 0;
     }
 
     private void OnBuscaTextChanged(object? sender, TextChangedEventArgs e)

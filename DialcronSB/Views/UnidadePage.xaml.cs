@@ -33,6 +33,8 @@ public partial class UnidadePage : ContentPage
 			_unidades.Clear();
 			foreach (var unidade in unidades)
 				_unidades.Add(unidade);
+
+			ListaVaziaLabel.IsVisible = _unidades.Count == 0;
 		}
 		catch (Exception ex)
 		{

@@ -40,6 +40,8 @@ public partial class ProfissionalPage : ContentPage
 			_profissionais.Clear();
 			foreach (var profissional in profissionais)
 				_profissionais.Add(profissional);
+
+			ListaVaziaLabel.IsVisible = _profissionais.Count == 0;
 		}
 		catch (Exception ex)
 		{

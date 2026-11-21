@@ -39,8 +39,7 @@
                         x:Name="AtendimentosCollection"
                         HeightRequest="200"
                         SelectionMode="Single"
-                        SelectionChanged="OnAtendimentoSelecionado"
-                        EmptyView="Nenhum atendimento neste dia">
+                        SelectionChanged="OnAtendimentoSelecionado">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <Grid ColumnDefinitions="90,*,*,Auto" ColumnSpacing="8" Padding="0,8">
@@ -52,6 +51,14 @@
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
+
+                    <Label
+                        x:Name="ListaVaziaLabel"
+                        Text="Nenhum atendimento neste dia"
+                        FontSize="13"
+                        TextColor="{StaticResource Gray500}"
+                        HorizontalOptions="Center"
+                        IsVisible="False" />
                 </VerticalStackLayout>
             </Border>
 
@@ -108,8 +115,7 @@
                             x:Name="ServicosCollection"
                             HeightRequest="140"
                             SelectionMode="Multiple"
-                            SelectionChanged="OnServicosSelecionados"
-                            EmptyView="Cadastre serviços para selecioná-los">
+                            SelectionChanged="OnServicosSelecionados">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
                                     <Grid ColumnDefinitions="*,Auto" Padding="0,6">
@@ -119,6 +125,14 @@
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>
+
+                        <Label
+                            x:Name="ServicosVaziosLabel"
+                            Text="Cadastre serviços para selecioná-los"
+                            FontSize="13"
+                            TextColor="{StaticResource Gray500}"
+                            HorizontalOptions="Center"
+                            IsVisible="False" />
                     </VerticalStackLayout>
 
                     <HorizontalStackLayout Spacing="12">

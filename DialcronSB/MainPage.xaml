@@ -44,27 +44,12 @@
             HorizontalOptions="Fill" />
 
         <Button
-            x:Name="BackupBtn"
-            Text="Backup"
+            x:Name="ConfiguracoesBtn"
+            Text="Configurações"
             FontSize="18"
-            Clicked="OnBackupClicked"
-            SemanticProperties.Hint="Gera um backup do banco de dados"
+            Clicked="OnConfiguracoesClicked"
+            SemanticProperties.Hint="Abre backup, importacao e atualizacoes"
             HorizontalOptions="Fill" />
-
-        <Button
-            x:Name="AtualizacoesBtn"
-            Text="Verificar atualização"
-            FontSize="18"
-            Clicked="OnVerificarAtualizacoesClicked"
-            SemanticProperties.Hint="Verifica se existe uma versao mais recente no GitHub"
-            HorizontalOptions="Fill" />
-
-        <Label
-            x:Name="VersaoLabel"
-            FontSize="12"
-            TextColor="{StaticResource Gray500}"
-            HorizontalOptions="Center"
-            HorizontalTextAlignment="Center" />
 
     </VerticalStackLayout>
 

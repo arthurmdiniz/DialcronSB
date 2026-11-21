@@ -40,6 +40,8 @@ public partial class ServicoPage : ContentPage
 			_servicos.Clear();
 			foreach (var servico in servicos)
 				_servicos.Add(servico);
+
+			ListaVaziaLabel.IsVisible = _servicos.Count == 0;
 		}
 		catch (Exception ex)
 		{

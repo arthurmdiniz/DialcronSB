@@ -31,8 +31,7 @@
                         x:Name="ProfissionaisCollection"
                         HeightRequest="180"
                         SelectionMode="Single"
-                        SelectionChanged="OnSelecaoChanged"
-                        EmptyView="Nenhum profissional cadastrado">
+                        SelectionChanged="OnSelecaoChanged">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <Grid ColumnDefinitions="2*,2*,3*" Padding="0,8">
@@ -43,6 +42,14 @@
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
+
+                    <Label
+                        x:Name="ListaVaziaLabel"
+                        Text="Nenhum profissional cadastrado"
+                        FontSize="13"
+                        TextColor="{StaticResource Gray500}"
+                        HorizontalOptions="Center"
+                        IsVisible="False" />
                 </VerticalStackLayout>
             </Border>
 

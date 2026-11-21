@@ -35,8 +35,7 @@
                         x:Name="ClientesCollection"
                         HeightRequest="180"
                         SelectionMode="Single"
-                        SelectionChanged="OnSelecaoChanged"
-                        EmptyView="Nenhum cliente cadastrado">
+                        SelectionChanged="OnSelecaoChanged">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <Grid ColumnDefinitions="*,*" Padding="0,8">
@@ -46,6 +45,14 @@
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
+
+                    <Label
+                        x:Name="ListaVaziaLabel"
+                        Text="Nenhum cliente cadastrado"
+                        FontSize="13"
+                        TextColor="{StaticResource Gray500}"
+                        HorizontalOptions="Center"
+                        IsVisible="False" />
                 </VerticalStackLayout>
             </Border>
 
