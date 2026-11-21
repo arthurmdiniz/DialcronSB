@@ -65,16 +65,48 @@
                         Style="{StaticResource SubHeadline}"
                         SemanticProperties.HeadingLevel="Level2" />
 
-                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-                        <VerticalStackLayout Grid.Column="0" Spacing="3">
-                            <Label Text="Unidade" />
-                            <Picker x:Name="UnidadePicker" Title="Unidade" ItemDisplayBinding="{Binding Exibicao}" />
-                        </VerticalStackLayout>
-                        <VerticalStackLayout Grid.Column="1" Spacing="3">
-                            <Label Text="Cliente" />
-                            <Picker x:Name="ClientePicker" Title="Cliente" ItemDisplayBinding="{Binding Exibicao}" />
-                        </VerticalStackLayout>
-                    </Grid>
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="Unidade" />
+                        <Picker x:Name="UnidadePicker" Title="Unidade" ItemDisplayBinding="{Binding Exibicao}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="Cliente" />
+                        <SearchBar
+                            x:Name="ClienteBuscaBar"
+                            Placeholder="Buscar por nome ou celular"
+                            TextChanged="OnClienteBuscaTextChanged" />
+                        <CollectionView
+                            x:Name="ClientesCollection"
+                            HeightRequest="120"
+                            SelectionMode="Single"
+                            SelectionChanged="OnClienteSelecionado">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid RowDefinitions="Auto,Auto" Padding="0,4">
+                                        <Label Grid.Row="0" Text="{Binding Nome}" />
+                                        <Label
+                                            Grid.Row="1"
+                                            Text="{Binding CelularExibicao}"
+                                            FontSize="12"
+                                            TextColor="{StaticResource Gray600}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                        <Label
+                            x:Name="ClientesVaziosLabel"
+                            Text="Nenhum cliente encontrado"
+                            FontSize="13"
+                            TextColor="{StaticResource Gray500}"
+                            HorizontalOptions="Center"
+                            IsVisible="False" />
+                        <Label
+                            x:Name="ClienteSelecionadoLabel"
+                            FontSize="12"
+                            TextColor="{StaticResource Gray600}"
+                            IsVisible="False" />
+                    </VerticalStackLayout>
 
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
                         <VerticalStackLayout Grid.Column="0" Spacing="3">
