@@ -60,7 +60,7 @@ jobs:
 
       - name: Publish Windows
         shell: pwsh
-        run: dotnet publish DialcronSB/DialcronSB.csproj -c Release -f net10.0-windows10.0.19041.0 --no-restore -p:ApplicationVersion=${{ github.run_number }}
+        run: dotnet publish DialcronSB/DialcronSB.csproj -c Release -f net10.0-windows10.0.19041.0 --no-restore -p:ApplicationVersion=${{ github.run_number }} -p:PublishReadyToRun=false
 
       - name: Publish Android signed
         if: env.ANDROID_KEYSTORE_BASE64 != ''
