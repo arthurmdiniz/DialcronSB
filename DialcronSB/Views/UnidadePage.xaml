@@ -30,8 +30,7 @@
                         x:Name="UnidadesCollection"
                         HeightRequest="160"
                         SelectionMode="Single"
-                        SelectionChanged="OnSelecaoChanged"
-                        EmptyView="Nenhuma unidade cadastrada">
+                        SelectionChanged="OnSelecaoChanged">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <Grid ColumnDefinitions="60,*" Padding="0,8">
@@ -41,6 +40,14 @@
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
+
+                    <Label
+                        x:Name="ListaVaziaLabel"
+                        Text="Nenhuma unidade cadastrada"
+                        FontSize="13"
+                        TextColor="{StaticResource Gray500}"
+                        HorizontalOptions="Center"
+                        IsVisible="False" />
                 </VerticalStackLayout>
             </Border>
 

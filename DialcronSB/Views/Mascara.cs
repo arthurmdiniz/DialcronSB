@@ -8,12 +8,15 @@ public static class Mascara
 {
     public static void Aplicar(Entry entry, Func<string?, string> formatar)
     {
-        var formatado = formatar(entry.Text);
+        entry.Dispatcher.Dispatch(() =>
+        {
+            var atual = entry.Text;
+            var formatado = formatar(atual);
 
-        if (entry.Text == formatado)
-            return;
+            if (string.Equals(atual, formatado, StringComparison.Ordinal))
+                return;
 
-        entry.Text = formatado;
-        entry.CursorPosition = formatado.Length;
+            entry.Text = formatado;
+        });
     }
 }

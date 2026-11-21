@@ -89,6 +89,8 @@ public partial class AgendaPage : ContentPage
 			_servicosDisponiveis.Clear();
 			foreach (var servico in servicos.Where(s => s.EstaAtivo))
 				_servicosDisponiveis.Add(servico);
+
+			ServicosVaziosLabel.IsVisible = _servicosDisponiveis.Count == 0;
 		}
 		catch (Exception ex)
 		{
@@ -126,6 +128,8 @@ public partial class AgendaPage : ContentPage
 					SituacaoTexto = _situacoes.FirstOrDefault(s => s.Codigo == atendimento.Situacao)?.Texto ?? atendimento.Situacao
 				});
 			}
+
+			ListaVaziaLabel.IsVisible = _atendimentos.Count == 0;
 		}
 		catch (Exception ex)
 		{
