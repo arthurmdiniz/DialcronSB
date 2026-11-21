@@ -4,20 +4,112 @@
              x:Class="DialcronSB.Views.ServicoPage"
              Title="Serviços">
 
-    <VerticalStackLayout
-        Padding="30,0"
-        Spacing="15"
-        VerticalOptions="Center">
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="16">
 
-        <Label
-            Text="Serviços"
-            Style="{StaticResource Headline}"
-            SemanticProperties.HeadingLevel="Level1" />
+            <Label
+                Text="Cadastro de Serviços"
+                Style="{StaticResource Headline}"
+                SemanticProperties.HeadingLevel="Level1" />
 
-        <Label
-            Text="Tela em construçãooooooooo"
-            Style="{StaticResource SubHeadline}" />
+            <Border
+                Padding="16"
+                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource DarkSurface}}">
+                <VerticalStackLayout Spacing="12">
+                    <Label
+                        Text="Lista"
+                        Style="{StaticResource SubHeadline}"
+                        SemanticProperties.HeadingLevel="Level2" />
 
-    </VerticalStackLayout>
+                    <Grid ColumnDefinitions="*,Auto,Auto" Padding="0,4">
+                        <Label Text="Nome" FontAttributes="Bold" />
+                        <Label Grid.Column="1" Text="Preço" FontAttributes="Bold" />
+                        <Label Grid.Column="2" Text="Minutos" FontAttributes="Bold" />
+                    </Grid>
+
+                    <CollectionView
+                        x:Name="ServicosCollection"
+                        HeightRequest="180"
+                        SelectionMode="Single"
+                        SelectionChanged="OnSelecaoChanged"
+                        EmptyView="Nenhum serviço cadastrado">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="12" Padding="0,8">
+                                    <Label Text="{Binding Nome}" />
+                                    <Label Grid.Column="1" Text="{Binding Preco, StringFormat='R$ {0:N2}'}" />
+                                    <Label Grid.Column="2" Text="{Binding DuracaoMinutos}" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border
+                Padding="16"
+                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource DarkSurface}}">
+                <VerticalStackLayout Spacing="12">
+                    <Label
+                        Text="Dados do serviço"
+                        Style="{StaticResource SubHeadline}"
+                        SemanticProperties.HeadingLevel="Level2" />
+
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="Unidade" />
+                        <Picker
+                            x:Name="UnidadePicker"
+                            Title="Selecione a unidade"
+                            ItemDisplayBinding="{Binding Exibicao}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="Nome" />
+                        <Entry x:Name="NomeEntry" Placeholder="Nome do serviço" />
+                    </VerticalStackLayout>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="3">
+                            <Label Text="Preço (R$)" />
+                            <Entry x:Name="PrecoEntry" Placeholder="0,00" Keyboard="Numeric" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="3">
+                            <Label Text="Duração (minutos)" />
+                            <Entry x:Name="DuracaoEntry" Placeholder="30" Keyboard="Numeric" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <HorizontalStackLayout Spacing="12">
+                        <Label Text="Ativo" VerticalOptions="Center" />
+                        <Switch x:Name="AtivoSwitch" IsToggled="True" Toggled="OnAtivoToggled" />
+                        <Label x:Name="AtivoStatusLabel" Text="Ativo" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12" Margin="0,8,0,0">
+                        <Button
+                            Grid.Column="0"
+                            x:Name="IncluirBtn"
+                            Text="Incluir"
+                            Clicked="OnIncluirClicked"
+                            SemanticProperties.Hint="Prepara um novo serviço para cadastro" />
+                        <Button
+                            Grid.Column="1"
+                            x:Name="SalvarBtn"
+                            Text="Salvar"
+                            Clicked="OnSalvarClicked"
+                            SemanticProperties.Hint="Salva o serviço informado" />
+                        <Button
+                            Grid.Column="2"
+                            x:Name="ExcluirBtn"
+                            Text="Excluir"
+                            Clicked="OnExcluirClicked"
+                            IsEnabled="False"
+                            SemanticProperties.Hint="Exclui o serviço selecionado" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
 
 </ContentPage>
